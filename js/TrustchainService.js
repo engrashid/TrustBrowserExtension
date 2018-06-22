@@ -7,12 +7,21 @@ var TrustchainService = (function() {
 
     TrustchainService.prototype.Query = function(targets) {
         var query = this.BuildQuery(targets);
+        if(query == null) {
+            var deferred = $.Deferred();
+            deferred.resolve(null);
+            return deferred;
+        }
+            
         return this.PostData('/api/graph/Query', JSON.stringify(query));
     }
 
     TrustchainService.prototype.BuildQuery = function(targets, scope) {
         var subjects = [];
         for (var key in targets) {
+            if (!targets.hasOwnProperty(key))
+                continue;
+                // do stuff
             var target = targets[key];
             var subject = { address: target.address };
             subjects.push(subject);
@@ -21,6 +30,9 @@ var TrustchainService = (function() {
                 subjects.push(subject);
             }
         }
+
+        if(subjects.length == 0)
+            return null;
     
         if(typeof scope === 'string')
             scope = { value : scope };

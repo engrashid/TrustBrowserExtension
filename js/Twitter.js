@@ -140,6 +140,23 @@ DTP.trace = function (message) {
             });
         }
 
+        ProfileController.prototype.twitterUserAction = function() {
+            // const self = this;
+
+            // if(!self.profile.result)
+            //     return;
+
+            // if(self.profile.result.state < 0) {
+            //     var event = new Event('uiBlockAction', { userId: self.profile.userId });
+                
+            //     // Dispatch the event.
+            //     document.dispatchEvent(event);
+            // }
+
+            
+        }
+
+
         ProfileController.prototype.buildAndSubmitBinaryTrust = function(profile, value, expire) {
             const self = this;
             let package = this.host.subjectService.BuildBinaryTrust(profile, value, null, expire);
@@ -268,6 +285,17 @@ DTP.trace = function (message) {
             if (this.controller.profile.result.state < 0) {
                 bar.distrust.$a.removeClass("trustIconPassive").addClass("distrustIconActive");
                 bar.distrust.$span.text(this.controller.profile.result.distrust);
+                $element.find('.js-tweet-text-container').hide();
+                $element.find('.QuoteTweet-container').hide();
+                $element.find('.AdaptiveMediaOuterContainer').hide();
+                $element.find('img').hide();
+            }
+            else {
+                $element.find('.js-tweet-text-container').show();
+                $element.find('.QuoteTweet-container').show();
+                $element.find('.AdaptiveMediaOuterContainer').show();
+                $element.find('img').show();
+
             }
 
             if (this.controller.profile.result.direct) {
@@ -531,8 +559,8 @@ DTP.trace = function (message) {
   
             self.queryResult = {};
             self.waiting = false;
-            self.profilesToQuery= [];
-            self.sessionProfiles = [];
+            self.profilesToQuery= {};
+            self.sessionProfiles = {};
             
 
             self.processElement = function(element) { // Element = dom element
@@ -541,9 +569,9 @@ DTP.trace = function (message) {
 
                 DTP.ProfileController.addTo(profile, self, element);
                 
-                self.sessionProfiles.push(profile); // All the profiles in the current page session
+                self.sessionProfiles[profile.screen_name] = profile; // All the profiles in the current page session
                 if(profile.controller.time == 0) { 
-                    self.profilesToQuery.push(profile);
+                    self.profilesToQuery[profile.screen_name] = profile;
                 }
 
                 profile.controller.render(element);
@@ -557,24 +585,30 @@ DTP.trace = function (message) {
 
         Twitter.prototype.queryDTP = function (profiles) {
             let self = this;
-            if(!profiles || profiles.length == 0) {
+            if(!profiles) {
                 return;
             }
 
             return this.trustchainService.Query(profiles, window.location.hostname).then(function(result) {
-                if (result || result.status == "Success") {
+                if (result && result.status == "Success") {
                     DTP.trace(JSON.stringify(result, null, 2));
                     let th = new TrustHandler(result.data.results, self.settings);
-                    for (let profile of profiles) {
+                    for (let key in profiles) {
+                        if (!profiles.hasOwnProperty(key))
+                            continue;
+        
+                        let profile = profiles[key];
                         profile.controller.trustHandler = th;
                         profile.controller.time = Date.now();
                         profile.controller.calculateTrust();
+                        profile.controller.twitterUserAction();
                         profile.controller.render();
                         profile.controller.save();
                     }
                 }
                 else {
-                    console.log(result.message);
+                    if(result)
+                        DTP.trace(result.message);
                 }
             });
         }
@@ -614,6 +648,10 @@ DTP.trace = function (message) {
                                 
                 DTP.ProfileController.bindEvents(element, self.profileRepository);
                 DTP.ProfileView.createTweetDTPButton();
+
+                // document.addEventListener('uiBlockAction', function (t,e) {
+                //     console.log(e.userId);
+                // }, false);
             });
 
 
@@ -640,7 +678,7 @@ DTP.trace = function (message) {
                         DTP.ProfileView.createTweetDTPButton();
 
                         self.queryDTP(self.profilesToQuery);
-                        self.profilesToQuery = [];
+                        self.profilesToQuery = {};
                         self.waiting = false;
                     }, 100);
                 }

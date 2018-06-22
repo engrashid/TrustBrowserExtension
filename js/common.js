@@ -66,7 +66,7 @@ String.prototype.toBase64 = function() {
 
 
 String.prototype.findSubstring = function(startText, endText, returnInner, ignoreCase) {
-    let start = ignoreCase ? this.toLocaleLowerCase().indexOf(startText.toLocaleLowerCase()) : this.indexOf(startText);
+    let start = ignoreCase ? this.toLocaleLowerCase().indexOf(startText.toLocaleLowerCase()) : this.toString().indexOf(startText);
     if(start < 0)
         return null;
 
@@ -102,7 +102,7 @@ function isNullOrWhitespace(input) {
 
 // Create a hash160 of a string
 String.prototype.hash160 = function() {
-    return tce.bitcoin.crypto.hash160(new tce.buffer.Buffer(this, 'UTF8'));
+    return tce.bitcoin.crypto.hash160(new tce.buffer.Buffer(this.toString(), 'UTF8'));
 }
 
 function GetIDFromContent(content) {
