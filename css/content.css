@@ -1,0 +1,79 @@
+/* .trust {
+    
+}
+
+.distrust {
+    
+}
+
+.neutral {
+    
+} */
+
+.blue {
+    color: blue;
+}
+
+.red {
+	color: red;
+}
+
+.green {
+	color: green;
+}
+
+.yellow {
+	color: yellow;
+}
+
+.trustIcon {
+    float: left;
+    margin-right: 0px;
+    height: 13px;
+    width: 13px;
+    margin-top: 0px;
+    cursor: pointer;
+    background-size: 13px;
+    display: inline-block;
+}
+
+.dtpIdenticon {
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+.iconTwitterColor {
+    color: rgb(136,153,166)
+}
+
+.trustIconPassive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Trust24p.png');
+}
+
+.trustIconActive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Trust24a.png');
+}
+
+.distrustIconPassive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Distrust24p.png');
+}
+
+.distrustIconActive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Distrust24a.png');
+}
+
+.untrustIconPassive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Neutral24p.png');
+}
+
+.untrustIconActive {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Neutral24a.png');
+}
+
+.trustSpinner24 {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/Spinner24px.gif') !important;
+}
+
+.dtpUserAction-Button {
+    margin-right: 5px;
+}

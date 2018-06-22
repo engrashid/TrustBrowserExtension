@@ -1,0 +1,151 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Trust Chrome Extension for handling trust">
+    <meta name="author" content="Carsten Keutmann">
+
+    <title>Trust Chrome Extension</title>
+
+
+    <!-- Cascading Style Sheets -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.custom.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Trust</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav" data-tabs="tabs">
+                <li class="active"><a href="#usercontainer" data-toggle="tab">User</a></li>
+                <li><a href="#settingscontainer" data-toggle="tab">Settings</a></li>
+                <li><a href="#servercontainer" data-toggle="tab">Server</a></li>
+                <li><a href="#aboutcontainer" data-toggle="tab">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    
+    <section>
+        <form class="form-signin">
+            <div id="my-tab-content" class="tab-content">
+                <div id="usercontainer" class="tab-pane active">
+                    <h3 class="form-signin-heading">User identity</h3>
+                    <p>The user account ID are generated from the Password and the additional seed (optional). No signup is needed.</p>
+                    <div><label for="inputPassword">Password</label></div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                        <input id="inputPassword" type="text" class="form-control" name="inputPassword" placeholder="Password" required autofocus>
+                    </div>
+                    <label for="inputSeed">Additional seed - Fill in for better security.</label>
+                    <div class="input-group">
+                        <span class="input-group-addon">Text</span>
+                        <input type="text" id="inputSeed" class="form-control" name="msg" placeholder="E-mail / Phone / Pin or any text">
+                    </div>
+                    <div class="input-group">
+                        <img id="identicon" style="float: left; padding: 5px;">
+                        <div style="float: left; padding: 5px;">
+                            <label for="address">Address: </label><br><span id="address"></span>
+                        </div>
+                    </div>
+                    <!-- <div class="input-group">
+                        <button type="button" data-toggle="collapse" class="btn btn-link" data-target="#keyContainer">Crypto data</button>
+                    </div>
+                    <div class="input-group">
+                        <div id="keyContainer" class="collapse col-xs-12">
+                            <div><label for="keyid">ID</label></div>
+                            <div id="keyid"></div>
+                            <div><label for="privateKey">Private key</label></div>
+                            <div id="privateKey"></div> -->
+                            <!-- <div><label for="signature">Signature</label></div> -->
+                            <!-- <div id="signature" style="overflow-wrap: break-word;"></div> -->
+                            <!--<div>Public key: <span id="publicKey"></span></div>-->
+                            <!--<p>Hash Value: <span id="hashValue"></span></p>
+                        <p>Message: <span id="message"></span></p>
+                        <p>Pre HEX: <span id="prehex"></span></p>-->
+
+                        <!-- </div>
+                    </div> -->
+                    <div class="input-group">
+                        <div class="checkbox">
+                            <label>
+                                <input id="rememberMe" type="checkbox" value="remember-me" checked>Remember me
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="settingscontainer" class="tab-pane">
+                    <h3 class="form-signin-heading">Trust settings</h3>
+                    <div>Behavior of rendering trust <img src="img/check16.gif"></div>
+                    <div class="input-group">
+                        <div class="radio">
+                            <label><input type="radio" name="trustrenderradio" value="noaction">No action</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="trustrenderradio" value="icon">Icon</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="trustrenderradio" value="color">Color</label>
+                        </div>
+                    </div>
+                    <p>Behavior of rendering distrust <img src="img/close16.png"></p>
+                    <div class="input-group">
+                        <div class="radio">
+                            <label><input type="radio" name="resultrenderradio" value="noaction">No action</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="resultrenderradio" value="icon">Icon</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="resultrenderradio" value="color">Color</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="checkbox">
+                            <label>
+                                <input id="distrusthide" type="checkbox" value="hide" checked>Hide content
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="servercontainer" class="tab-pane">
+                    <h3 class="form-signin-heading">Server</h3>
+                    <div class="input-group">
+                        <label for="trustserver">Trust server</label>
+                        <input type="url" id="trustserver" class="form-control" placeholder="Trust server" value="https://trust.dance" required autofocus>
+                    </div>
+                </div>
+                <div id="aboutcontainer" class="tab-pane">
+                    <h3 class="form-signin-heading">About</h3>
+                    <div>
+                        <div>Github repositories</div>
+                        <div><a href="https://github.com/keutmann/Trustchain" target="_blank">Trustchain documentation</a></div>
+                        <div><a href="https://github.com/keutmann/TrustChromeExtension" target="_blank">Trustchain Chrome Extension</a></div>
+                        <div><a href="https://github.com/keutmann/Trustchain-Solution" target="_blank">Trustchain Server</a></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div>
+            <button id="savebtn" class="btn btn-lg btn-primary btn-block" type="button">Save</button>
+        </div>
+    </section>
+
+
+    <!-- Bootstrap core JavaScript
+     ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="lib/jquery/jquery-2.0.3.min.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="lib/bitcoinjs/bitcoin.js"></script>
+    <script src="lib/identiconjs/identicon.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/SettingsController.js"></script>
+    <script src="js/extensionpopup.js"></script>
+
+</body>
+</html>

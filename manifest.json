@@ -1,0 +1,82 @@
+{
+  "name": "Trust Chrome Extension",
+  "description": "Proof of concept of Trustchain UI implementation - Currently only for Reddit. This extension is in alpha and do not provide any security features, no effort has been done to protect your password!",
+  "version": "0.1",
+  "manifest_version": 2,
+  "author": "Trustchain",
+
+  "icons": {
+    "16": "img/DTP16a.png",
+    "48": "img/DTP48a.png",
+    "128": "img/DTP128a.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "19": "img/DTP48a.png",
+      "38": "img/DTP48a.png"
+    },
+    "default_popup": "extensionpopup.html"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "http://trust.dance/",
+    "https://trust.dance/"
+  ],
+  "background": {
+    "scripts": ["js/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [ "*://*.reddit.com/*" ],
+      "css": [
+        "lib/bootstrap/dist/css/bootstrap.css"
+      ],
+      "js": [
+        "lib/jquery/jquery-2.0.3.min.js",
+        "lib/bootstrap/dist/js/bootstrap.min.js",
+        "lib/identiconjs/identicon.js",
+        "lib/bitcoinjs/bitcoin.js",
+        "lib/notify/notify.min.js",
+        "js/common.js",
+        "js/SettingsController.js",
+        "js/TrustchainService.js",
+        "js/PackageBuilder.js",
+        "js/TrustHandler.js",
+        "js/SubjectService.js",
+        "js/TagBar.js",
+        "js/reddit.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [ "*://*.twitter.com/*" ],
+      "css": [
+        "css/content.css"
+      ],
+      "js": [
+        "lib/jquery/jquery-2.0.3.min.js",
+        "lib/bootstrap/dist/js/bootstrap.min.js",
+        "lib/identiconjs/identicon.js",
+        "lib/bitcoinjs/bitcoin.js",
+        "lib/notify/notify.min.js",
+        "js/common.js",
+        "js/SettingsController.js",
+        "js/TrustchainService.js",
+        "js/PackageBuilder.js",
+        "js/TrustHandler.js",
+        "js/SubjectService.js",
+        "js/Twitter.js"
+      ],
+      "run_at": "document_end"
+    }
+
+  ],
+  "web_accessible_resources": [
+    "/*",
+    "img/*",
+    "js/*",
+    "lib/*",
+    "fonts/*"
+  ]
+}
