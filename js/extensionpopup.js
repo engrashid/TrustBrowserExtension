@@ -25,7 +25,12 @@ $("#savebtn").click(function () {
         items["resultrendercolor"] = "lightpink";
         items["resultrendericon"] = "close16.png";
         items["resultrenderhide"] = $("#distrusthide").prop('checked');
-        ;
+
+
+        items["twittertrust"] = $("input[name='twittertrustradio']:checked").val();
+        items["twitterdistrust"] = $("input[name='twitterdistrustradio']:checked").val();
+
+        
         controller.saveSettings(items);
         controller.buildKey(items);
         BindSettings(items);
@@ -40,10 +45,19 @@ function BindSettings(items) {
 
     // $("#buildserver").val(items.buildserver);
     // $("#graphserver").val(items.graphserver);
+
+
     $("[name='trustrenderradio']").val([items.trustrender]);
     $("[name='resultrenderradio']").val([items.resultrender]);
 
     $("#distrusthide").prop('checked', items["resultrenderhide"] == true);
+  
+    items.twittertrust = items.twittertrust || "noaction";
+    items.twitterdistrust = items.twitterdistrust || "hidecontent";
+    
+    $("[name='twittertrustradio']").val([items.twittertrust ]);
+    $("[name='twitterdistrustradio']").val([items.twitterdistrust]);
+
 
     var address = items.publicKeyHash.toString('HEX');
     $("#address").text(address);
