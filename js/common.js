@@ -49,7 +49,7 @@ String.prototype.base64ToBuffer = function() {
 
 
 tce.buffer.Buffer.prototype.toAddress = function () {
-    return tce.bitcoin.address.toBase58Check(this, 0x00);
+    return tce.bitcoin.address.toBase58Check(this, 30);
 }
 
 String.prototype.toAddress = function() {
@@ -85,8 +85,6 @@ String.prototype.findSubstring = function(startText, endText, returnInner, ignor
 
     return this.substring(start, end);
 }
-
-
 
 
 function GetTargetAddress(target) {

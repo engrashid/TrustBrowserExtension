@@ -60,16 +60,16 @@
                 <table class="trustList" >
                     <tr>
                         <td>
-                            <img ng-src="data:image/svg+xml;base64,{{ subject.identicoinData }}">
+                            <img ng-src="data:image/svg+xml;base64,{{ subject.identiconData64 }}">
                         </td>
                         <td>
-                            <div ng-class="subject.addressClass">Address: {{ subject.addressHex }} - 
+                            <div ng-class="subject.addressClass">Address: {{ subject.addressEncoded }} - 
                                 <a href="#" ng-click="trustClick(subject);" ng-title="Trust {{ subject.alias }}">[T]</a>
                                 <a href="#" ng-click="distrustClick(subject);" ng-title="Distrust {{ subject.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(subject);" ng-title="Untrust {{ subject.alias }}">[U]</a>
                             </div>
                             <div ng-class="subject.aliasClass">Alias:{{ subject.alias }}</div>
-                            <div ng-hide="!subject.owner.addressHex" class="small">Owner entity: <img ng-src="data:image/svg+xml;base64,{{ subject.owner.identiconData16 }}" ng-click="analyseClick(subject.owner)"> {{ subject.owner.addressHex }}</div>
+                            <div ng-hide="!subject.owner.address" class="small">Owner entity: <img ng-src="data:image/svg+xml;base64,{{ subject.owner.identiconData16 }}" ng-click="analyseClick(subject.owner)"> {{ subject.owner.addressEncoded }}</div>
                             <!-- <div>Base64: {{ subject.address }}</div> -->
                         </td>
                         <td>
@@ -84,10 +84,10 @@
                 <table class="trustList" >
                     <tr ng-repeat="trust in trusted">
                         <td>
-                            <a href="#" ng-click="analyseClick(trust)"><img ng-src="data:image/svg+xml;base64,{{ trust.identiconData }}"></a>
+                            <a href="#" ng-click="analyseClick(trust)"><img ng-src="data:image/svg+xml;base64,{{ trust.identiconData64 }}"></a>
                         </td>
                         <td>
-                            <div>Address: {{ trust.issuerAddressHex }} - 
+                            <div>Address: {{ trust.issuer.addressEncoded }} - 
                                 <a href="#" ng-click="trustClick(trust);" ng-title="Trust {{ trust.alias }}" ng-show="trust.showTrustButton">[T]</a>
                                 <a href="#" ng-click="distrustClick(trust);" ng-title="Trust {{ trust.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(trust);" ng-title="Trust {{ trust.alias }}">[U]</a>
@@ -109,10 +109,10 @@
                 <table class="trustList" >
                     <tr ng-repeat="trust in distrusted">
                         <td>
-                            <a href="#" ng-click="analyseClick(trust)"><img ng-src="data:image/svg+xml;base64,{{ trust.identiconData }}"></a>
+                            <a href="#" ng-click="analyseClick(trust)"><img ng-src="data:image/svg+xml;base64,{{ trust.identiconData64 }}"></a>
                         </td>
                         <td>
-                            <div>Address: {{ trust.issuerAddressHex }} - 
+                            <div>Address: {{ trust.issuer.addressEncoded }} - 
                                 <a href="#" ng-click="trustClick(trust);" ng-title="Trust {{ trust.alias }}">[T]</a>
                                 <a href="#" ng-click="distrustClick(trust);" ng-title="Trust {{ trust.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(trust);" ng-title="Trust {{ trust.alias }}">[U]</a>

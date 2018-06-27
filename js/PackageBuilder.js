@@ -1,11 +1,6 @@
 var PackageBuilder = (function() {
 
-    PackageBuilder.BINARYTRUST_TC1 = "binarytrust.tc1";
-    PackageBuilder.CONFIRMTRUST_TC1 = "confirm.tc1";
-    PackageBuilder.RATING_TC1 = "rating.tc1";
-    PackageBuilder.IDENTITY_TC1 = "identity.tc1";
-
-    
+   
     function PackageBuilder(settings) {
         this.settings = settings;
 
@@ -134,6 +129,11 @@ var PackageBuilder = (function() {
         buf.copy(data, 0, 0, offset);
         trust.id = tce.bitcoin.crypto.hash256(data); 
     }
+
+    PackageBuilder.BINARYTRUST_TC1 = "binarytrust.tc1";
+    PackageBuilder.CONFIRMTRUST_TC1 = "confirm.tc1";
+    PackageBuilder.RATING_TC1 = "rating.tc1";
+    PackageBuilder.IDENTITY_TC1 = "identity.tc1";
 
     return PackageBuilder;
 }())

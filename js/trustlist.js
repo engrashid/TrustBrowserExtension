@@ -30,8 +30,8 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.init();
         $scope.subject = subject;
         $scope.trustHandler = new TrustHandler($scope.subject.queryResult, $scope.settings);
-        $scope.subject.addressHex = (new tce.buffer.Buffer($scope.subject.address, 'base64')).toString("HEX");
-        $scope.subject.identicoinData = $scope.getIdenticoinData($scope.subject.addressHex);
+        $scope.subject.addressEncoded = $scope.subject.address.toAddress();
+        $scope.subject.identiconData64 = $scope.getIdenticoinData($scope.subject.address);
         $scope.subject.addressClass = (this.subject.type != "thing") ? "text-primary": "";
         $scope.subject.aliasClass = (this.subject.type == "thing") ? "text-primary": "";
 
@@ -40,8 +40,8 @@ app.controller("trustlistCtrl", function($scope) {
 
         // The subject has an owner
         if($scope.subject.owner.address) {
-            $scope.subject.owner.addressHex = (new tce.buffer.Buffer($scope.subject.owner.address, 'base64')).toString("HEX");
-            $scope.subject.owner.identiconData16 = $scope.getIdenticoinData($scope.subject.owner.addressHex, 16);
+            $scope.subject.owner.addressEncoded = $scope.subject.owner.address.toAddress();
+            $scope.subject.owner.identiconData16 = $scope.getIdenticoinData($scope.subject.owner.address, 16);
         }
 
         $scope.subject.trusts = $scope.trustHandler.subjects[$scope.subject.address];
@@ -50,16 +50,17 @@ app.controller("trustlistCtrl", function($scope) {
         for(var index in $scope.subject.trusts) {
             var trust = $scope.subject.trusts[index];
 
-            trust.address = trust.issuer.address; 
+            //trust.address = trust.issuer.address; 
 
             // If trust is a BinaryTrust, decorate the trust object with data
-            if(trust.type == $scope.packageBuilder.BINARYTRUST_TC1) {
+            if(trust.type == PackageBuilder.BINARYTRUST_TC1) {
                 $scope.binarytrusts[trust.subject.address] = trust;
-                trust.issuer.addressHex = (new tce.buffer.Buffer(trust.issuer.address, 'base64')).toString("HEX");
-                trust.identiconData = $scope.getIdenticoinData(trust.issuer.addressHex);
+                trust.issuer.addressEncoded = trust.issuer.address.toAddress();
+                trust.identiconData64 = $scope.getIdenticoinData(trust.issuer.address);
+                trust.claimObj = JSON.parse(trust.claim);
 
                 // Add trust to the right list
-                if(trust.attributesObj.trust)
+                if(trust.claimObj.trust)
                     $scope.trusted.push(trust);
                 else
                     $scope.distrusted.push(trust);
@@ -76,7 +77,7 @@ app.controller("trustlistCtrl", function($scope) {
         for(var index in $scope.subject.trusts) {
             var trust = $scope.subject.trusts[index];
             // Ensure alias on trust, if exist
-            if(trust.type == $scope.packageBuilder.IDENTITY_TC1) {
+            if(trust.type == PackageBuilder.IDENTITY_TC1) {
 
                 $scope.binarytrusts[trust.subject.address].alias = trust.parseAttributes.alias + ($scope.subject.binaryTrust.direct) ? " (You)": "";
             }

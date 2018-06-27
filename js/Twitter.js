@@ -62,10 +62,6 @@ DTP.trace = function (message) {
             this.view = view;
             this.view.controller = this;
             this.host = host;
-            // this.twitterService = twitter.twitterService;
-            // this.profileRepository = twitter.profileRepository;
-            // this.subjectService = twitter.subjectService;
-            // this.packageBuilder = twitter.packageBuilder
             this.trustHandler = null;
             this.domElements = [];
             this.time = 0;
@@ -82,10 +78,15 @@ DTP.trace = function (message) {
             } else {
                 self.host.twitterService.getProfileDTP(self.profile.screen_name).then((owner) => {
                     if(owner != null) {
-                        owner.valid = DTP.ProfileController.verifyDTPsignature(owner, self.profile.screen_name);
+                        try {
+                            if(DTP.ProfileController.verifyDTPsignature(owner, self.profile.screen_name)) {
+                                self.profile.owner = owner;
+                                self.save();
+                            }
+                        } catch(error) {
+                            DTP.trace(error);
+                        }
                     }
-                    self.profile.owner = owner;
-                    self.save();
                     deferred.resolve(self.profile);
                 });
             }
@@ -252,7 +253,7 @@ DTP.trace = function (message) {
         }
 
         ProfileController.verifyDTPsignature = function(dtp, message) {
-            return tce.bitcoin.message.verify(dtp.address, dtp.signature, message);
+            return tce.bitcoin.message.verify(dtp.address.toAddress(), dtp.signature, message);
         }
 
         ProfileController.loadProfile = function(screen_name, profileRepository) {
@@ -287,13 +288,8 @@ DTP.trace = function (message) {
                     untrust:this.createButton("Untrust", "untrustIconPassive", "untrust")
                 }
 
-                if(this.controller.profile.owner && this.controller.profile.owner.valid) {
-
-                    bar.$fullNameGroup = $element.find(this.fullNameGroup);
-                    bar.$fullNameGroup.prepend(ProfileView.createIdenticon(this.controller.profile));
-                }
-
-
+                bar.$fullNameGroup = $element.find(this.fullNameGroup);
+                bar.$fullNameGroup.prepend(ProfileView.createIdenticon(this.controller.profile));
                
                 $anchor.after(bar.untrust.$html);
                 $anchor.after(bar.distrust.$html);
@@ -368,13 +364,27 @@ DTP.trace = function (message) {
         }
 
         ProfileView.createIdenticon = function(profile) {
-            if(!profile.owner.data) {
-                let icon = new Identicon(profile.owner.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
-                profile.owner.data = icon.toString();
-                profile.time = Date.now();
-                profile.controller.save();
+            let iconData = null;
+
+            if (profile.owner) {
+                if(!profile.owner.data) {
+                    let icon = new Identicon(profile.owner.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
+                    profile.owner.identiconData16 = icon.toString();
+                    profile.time = Date.now();
+                    profile.controller.save();
+                }                    
+                iconData = profile.owner.identiconData16;
+            } else {
+                if(!profile.identiconData16) {
+                    let icon = new Identicon(profile.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
+                    profile.identiconData16 = icon.toString();
+                    profile.time = Date.now();
+                    profile.controller.save();
+                }
+                iconData = profile.identiconData16;
             }
-            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0"><img src="data:image/svg+xml;base64,' + profile.owner.data + '" class="dtpIdenticon"></a>');
+
+            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
             $icon.data("dtp_profile", profile);
             $icon.click(function() {
                 var opt = {
@@ -426,10 +436,9 @@ DTP.trace = function (message) {
     DTP.Profile = (function () {
         function Profile(screen_name) { 
             this.screen_name = screen_name;
+            this.alias = screen_name;
             this.address = screen_name.hash160();
             this.scope = window.location.hostname;
-            this.personalScore = 0;
-            this.networkScore = 0;
         }
 
         Profile.LoadCurrent = function(settings, profileRepository) {
@@ -469,13 +478,14 @@ DTP.trace = function (message) {
                 }
    
                 let text = $(content).text();
-                text = text.replace("\n", ' ');
+                text = text.replace(/(?:\r\n|\r|\n)/g, ' ');
 
                 let btcAddress = text.findSubstring('Address:', ' ', true, true);
-                let hash = tce.bitcoin.address.fromBase58Check(btcAddress).hash;
+                let hash = tce.bitcoin.address.fromBase58Check(btcAddress, 30).hash;
+                
 
                 let result = {
-                    address: hash,
+                    address: hash.toBase64(),
                     signature: text.findSubstring('Signature:', ' ', true, true),
                     scope: '', // global
                 }
@@ -643,6 +653,7 @@ DTP.trace = function (message) {
                             continue;
         
                         let profile = profiles[key];
+                        profile.queryResult = result.data.results;
                         profile.controller.trustHandler = th;
                         profile.controller.time = Date.now();
                         profile.controller.calculateTrust();
