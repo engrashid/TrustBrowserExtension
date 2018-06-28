@@ -23,36 +23,19 @@ var PackageBuilder = (function() {
         return this;
     }
 
-    PackageBuilder.prototype.CreateBinaryTrust = function(issuer, script, subject, value, note, scope, activate, expire)
+    PackageBuilder.prototype.CreateBinaryTrust = function(issuer, script, subject, value, note, scope, activate, expire, note)
     {
-        var claim = { trust: value }
-        if(!isNullOrWhitespace(note))
-            claim.note = note;
+        var claim = (value !== undefined) ? { trust: value } : undefined;
             
-        var trust = this.CreateTrust(issuer, script, subject, PackageBuilder.BINARYTRUST_TC1, scope, JSON.stringify(claim), activate, expire);
-        return trust;
+        return this.CreateTrust(issuer, script, subject, PackageBuilder.BINARYTRUST_TC1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
-    PackageBuilder.prototype.CreateIdentityTrust = function(issuer, script, subject, claim, scope, activate, expire)
+    PackageBuilder.prototype.CreateAliasIdentityTrust = function(issuer, script, subject, claim, scope, activate, expire, note)
     {
-        //var attributes = { alias: value }
-        var trust = this.CreateTrust(issuer, script, subject, PackageBuilder.IDENTITY_TC1, scope, JSON.stringify(claim), activate, expire);
-        return trust;
+        return this.CreateTrust(issuer, script, subject, PackageBuilder.ALIAS_IDENTITY_TC1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
-    PackageBuilder.prototype.CreateTrust = function(issuer, script, subject, type, scope, claim, activate, expire)  {
-        // var trust = {
-        //     issuerScript: script,
-        //     issuerAddress: issuer,
-        //     subjectAddress: subject,
-        //     type: type,
-        //     scope: (scope) ? scope: "",
-        //     attributes: (attributes) ? attributes : "",
-        //     created: Math.round(Date.now()/1000.0),
-        //     cost: 100,
-        //     activate: (activate) ? activate: 0,
-        //     expire: (expire) ? expire: 0
-        // }
+    PackageBuilder.prototype.CreateTrust = function(issuer, script, subject, type, scope, claim, activate, expire, note)  {
         if(typeof scope === 'string')
             scope = { value : scope };
 
@@ -70,7 +53,8 @@ var PackageBuilder = (function() {
             created: Math.round(Date.now()/1000.0),
             cost: 100,
             activate: (activate) ? activate: 0,
-            expire: (expire) ? expire: 0
+            expire: (expire) ? expire: 0,
+            node: note
         }
 
         return trust;
@@ -134,6 +118,7 @@ var PackageBuilder = (function() {
     PackageBuilder.CONFIRMTRUST_TC1 = "confirm.tc1";
     PackageBuilder.RATING_TC1 = "rating.tc1";
     PackageBuilder.IDENTITY_TC1 = "identity.tc1";
+    PackageBuilder.ALIAS_IDENTITY_TC1 = "alias.identity.tc1";
 
     return PackageBuilder;
 }())

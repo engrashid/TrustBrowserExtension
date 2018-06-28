@@ -47,7 +47,7 @@ var TrustchainService = (function() {
             // Claim made about the subject. The format is specified by the version property in the header section.
             "types": [
                 "binarytrust.tc1",
-                "identity.tc1"
+                "alias.identity.tc1"
               ],
             "level": 0, // Use default level search (0)
             //"flags": "LeafsOnly"

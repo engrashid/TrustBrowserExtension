@@ -1,60 +1,4 @@
-var DTP = {};
-
-DTP.trace = function (message) {
-    console.log(message);
-};
-
 (function (DTP) {
-
-    DTP.ProfileRepository = (function () {
-        function ProfileRepository(settings, storage) { 
-            // No serializable
-            Object.defineProperty(this, 'settings', { value: settings, writable: true });
-            Object.defineProperty(this, 'storage', { value: storage, writable: false });
-            Object.defineProperty(this, 'profiles', { value: {}, writable: false });
-        }
-    
-
-        ProfileRepository.prototype.getCacheKey = function(screen_name) {
-            return 'Twitter'+this.settings.address+screen_name;
-        }
-
-        ProfileRepository.prototype.getProfile = function(screen_name) {
-            let profile = this.profiles[screen_name];
-            if(profile)
-                return profile;
-
-            var data = this.storage.getItem(this.getCacheKey(screen_name));
-            if(!data) {
-                return null;
-            } 
-
-            profile = JSON.parse(data);
-            this.setProfile(profile);
-            return profile;
-        }
-
-        ProfileRepository.prototype.setProfile = function(profile) {
-            this.profiles[profile.screen_name] = profile;
-            this.storage.setItem(this.getCacheKey(profile.screen_name), JSON.stringify(profile));
-        }
-
-        ProfileRepository.prototype.ensureProfile = function(screen_name) {
-            let profile = this.getProfile(screen_name);
-            if(!profile) {
-                profile = new DTP.Profile(screen_name);
-                this.setProfile(profile);
-                DTP.trace('Profile '+ profile.screen_name +' created');
-            }
-            return profile;
-        }
-
-        ProfileRepository.prototype.update = function(settings) {
-            this.settings = settings;
-        }
-
-        return ProfileRepository;
-    }());
 
     DTP.ProfileController = (function () {
         function ProfileController(profile, view, host) { 
@@ -131,7 +75,7 @@ DTP.trace = function (message) {
 
         ProfileController.prototype.untrust = function() {
             DTP.trace("Untrust "+ this.profile.screen_name);
-            return this.trustProfile(true, 1);
+            return this.trustProfile(undefined, 1);
         }
 
         ProfileController.prototype.trustProfile = function(value, expire) {
@@ -366,25 +310,26 @@ DTP.trace = function (message) {
         ProfileView.createIdenticon = function(profile) {
             let iconData = null;
 
-            if (profile.owner) {
-                if(!profile.owner.data) {
-                    let icon = new Identicon(profile.owner.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
-                    profile.owner.identiconData16 = icon.toString();
-                    profile.time = Date.now();
-                    profile.controller.save();
-                }                    
-                iconData = profile.owner.identiconData16;
-            } else {
-                if(!profile.identiconData16) {
-                    let icon = new Identicon(profile.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
-                    profile.identiconData16 = icon.toString();
-                    profile.time = Date.now();
-                    profile.controller.save();
-                }
-                iconData = profile.identiconData16;
+            // if (profile.owner) {
+            //     if(!profile.owner.data) {
+            //         let icon = new Identicon(profile.owner.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
+            //         profile.owner.identiconData16 = icon.toString();
+            //         profile.time = Date.now();
+            //         profile.controller.save();
+            //     }                    
+            //     iconData = profile.owner.identiconData16;
+            // } else {
+            
+            if(!profile.identiconData16) {
+                let icon = new Identicon(profile.address.toDTPAddress(), {margin:0.1, size:16, format: 'svg'});
+                profile.identiconData16 = icon.toString();
+                profile.time = Date.now();
+                profile.controller.save();
             }
+            iconData = profile.identiconData16;
+            //}
 
-            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
+            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0" title"'+ profile.address.toDTPAddress() +'"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
             $icon.data("dtp_profile", profile);
             $icon.click(function() {
                 var opt = {
@@ -760,49 +705,3 @@ settingsController.loadSettings(function (settings) {
 
     twitter.ready(document);
 });
-
-            // $(element).on('click', '.trust', function (event) {
-            //     let screen_name = $(this).closest('div[data-screen-name]').attr("data-screen-name");
-
-            //     let profile = self.profileRepository.getProfile(screen_name);
-            //     profile.controller.update().then(function(profile) {
-            //         DTP.trace(profile); 
-            //     });
-    
-                // event.preventDefault();
-                // if(!(location.href.indexOf("following") > 0) &&  !(location.href.indexOf("followers") >0) ){
-                //     if($(this).parents(".content").length > 0){
-                //         //console.log("timeline");
-                //         $(this).parents(".content").find("li.block-link").trigger("click");
-                //         $("body").removeClass("modal-enabled");
-                //         $(document).find("#block-dialog").hide();
-                //         $(document).find("button.block-button").trigger("click");
-                //     }
-                //     if($(this).parents(".permalink-tweet-container").length > 0){
-                //         //console.log("tweet permalink");
-                //         $(this).parents(".permalink-tweet-container").find("li.block-link").trigger("click");
-                //         $("body").removeClass("modal-enabled");
-                //         $(document).find("#block-dialog").hide();
-                //         $(document).find("button.block-button").trigger("click");
-                //         $(document).find("span.Icon--close").trigger("click");
-                //     }
-                //     if(	$(this).parents(".UserActions").length > 0){
-                //         //console.log("Profile block");
-                //         $(this).parents(".UserActions").find("li.not-blocked").trigger("click");
-                //         $("body").removeClass("modal-enabled");
-                //         $(document).find("#block-dialog").hide();
-                //         $(document).find("button.block-button").trigger("click");
-                //     }
-                // }else{
-                //     //console.log("following/followers page");
-                //     $(this).parents(".user-actions").find("li.not-blocked").trigger("click");
-                //     $("body").removeClass("modal-enabled");
-                //     $(document).find("#block-dialog").hide();
-                //     $(document).find("button.block-button").trigger("click");
-                // }
-
-                // var screen_name = $(this).closest('div[data-screen-name]').attr("data-screen-name");
-                // var message = $('<div class="msg error-message" style="display: none;">');
-                // message.append('User <a class="link" href="https://twitter.com/'+screen_name+'">@'+screen_name+'</a> has been blocked.');
-                // message.appendTo($('body')).fadeIn(300).delay(3000).fadeOut(500);
-            //});

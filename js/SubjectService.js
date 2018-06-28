@@ -43,22 +43,22 @@ var SubjectService = (function() {
     }
 
 
-    SubjectService.prototype.BuildBinaryTrust = function(target, value, note, expire) {
+    SubjectService.prototype.BuildBinaryTrust = function(profile, value, note, expire) {
         var trust = this.packageBuilder.CreateBinaryTrust(
             this.settings.publicKeyHash, 
             this.SCRIPT, 
-            target.address.base64ToBuffer(), 
+            profile.address.base64ToBuffer(), 
             value, 
             note,
-            target.scope,
+            profile.scope,
             0,
             expire);
 
         var package = this.packageBuilder.CreatePackage(trust);
 
-        if(target.owner) {
-            //var subjectAddress = new tce.buffer.Buffer(target.owner.address, 'HEX');
-            let subjectAddress = target.owner.address.base64ToBuffer();
+        if(profile.owner) {
+            //var subjectAddress = new tce.buffer.Buffer(profile.owner.address, 'HEX');
+            let subjectAddress = profile.owner.address.base64ToBuffer();
             var ownerTrust = this.packageBuilder.CreateBinaryTrust(
                 this.settings.publicKeyHash, 
                 this.SCRIPT, 
@@ -70,13 +70,13 @@ var SubjectService = (function() {
                 expire);
             package.trusts.push(ownerTrust);
 
-            if(target.type == "thing" && !isNullOrWhitespace(target.alias)) { 
-                var aliastrust = this.packageBuilder.CreateIdentityTrust(
+            if(!isNullOrWhitespace(profile.alias)) { 
+                var aliastrust = this.packageBuilder.CreateAliasIdentityTrust(
                     this.settings.publicKeyHash,
                     this.SCRIPT, 
                     subjectAddress,
-                    { alias: target.alias },
-                    target.scope,
+                    { alias: profile.alias },
+                    profile.scope,
                     0,
                     expire);
 

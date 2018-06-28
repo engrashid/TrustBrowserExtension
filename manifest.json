@@ -66,6 +66,7 @@
         "js/PackageBuilder.js",
         "js/TrustHandler.js",
         "js/SubjectService.js",
+        "js/ProfileRepository.js",
         "js/Twitter.js"
       ],
       "run_at": "document_end"

@@ -1,3 +1,8 @@
+var DTP = {};
+
+DTP.trace = function (message) {
+    console.log(message);
+};
 
 
 function ParseTrustMe(a) {
@@ -48,12 +53,23 @@ String.prototype.base64ToBuffer = function() {
 }
 
 
-tce.buffer.Buffer.prototype.toAddress = function () {
-    return tce.bitcoin.address.toBase58Check(this, 30);
+tce.buffer.Buffer.prototype.toAddress = function (prefix) {
+    prefix = prefix || 0;
+    return tce.bitcoin.address.toBase58Check(this, prefix);
 }
+
+tce.buffer.Buffer.prototype.toDTPAddress = function (prefix) {
+    prefix = prefix || 30; // dtp2K prefix is 5101629, 4 bytes Uint32LE
+    return tce.bitcoin.address.toBase58Check(this, prefix);
+}
+
 
 String.prototype.toAddress = function() {
     return this.base64ToBuffer().toAddress();
+}
+
+String.prototype.toDTPAddress = function() {
+    return this.base64ToBuffer().toDTPAddress();
 }
 
 tce.buffer.Buffer.prototype.toBase64 = function () {
@@ -128,3 +144,26 @@ function getQueryParams(url) {
 
     return qparams;
 };
+
+
+// function findPrefix() {
+//     let id = "test";
+//     let hash = id.hash160();
+//     let count = 256*256*256*256;
+
+//     let i = 0; 
+//     var address = "";
+//     while(address.indexOf("dtp") !== 0 && i < count) {
+//         if((i % 256*256) === 0)
+//             console.log(i);
+
+//         address = hash.toAddress(i);
+//         i++;
+//     }
+//     if(i < count) {
+//         console.log("Found: "+(i-1));
+//         console.log(address);
+//     } else {
+//         console.log("Nothing!");
+//     }
+// }

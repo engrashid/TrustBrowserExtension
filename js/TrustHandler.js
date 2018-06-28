@@ -19,7 +19,7 @@ var TrustHandler = (function() {
         for(var trustIndex in this.package.trusts)
         {
             var trust = this.package.trusts[trustIndex];
-            trust.attributesObj = JSON.parse(trust.claim);
+            trust.claimObj = JSON.parse(trust.claim);
 
             var list = this.subjects[trust.subject.address];
             if(!list) {
@@ -55,7 +55,7 @@ var TrustHandler = (function() {
                 if(trust.type === PackageBuilder.BINARYTRUST_TC1) {
                     binaryTrustCount ++;
 
-                    if(trust.attributesObj.trust === true) 
+                    if(trust.claimObj.trust === true) 
                         result.trust++;
                     else
                         result.distrust++;
@@ -63,14 +63,14 @@ var TrustHandler = (function() {
                     if(trust.issuer.address == self.settings.publicKeyHashBase64)
                     {
                         result.direct = true;
-                        result.directValue = trust.attributesObj.trust;
+                        result.directValue = trust.claimObj.trust;
                     }
                 }
             }
         }
         CalcTrust(ownerTrusts);
-        if(result.trust == 0 && result.distrust == 0)
-            CalcTrust(subjectTrusts);   
+        //if(result.trust == 0 && result.distrust == 0)
+        CalcTrust(subjectTrusts);   
 
         //result.trustPercent = Math.floor((result.isTrusted * 100) / binaryTrustCount);
         result.state = result.trust - result.distrust;
@@ -102,9 +102,9 @@ var TrustHandler = (function() {
                 //binaryTrustCount ++;
 
                 if(trust.issuer.address == self.settings.publicKeyHashBase64) { // Its your trust!
-                    result.personalScore += (trust.attributesObj.trust) ? 1 : -1;
+                    result.personalScore += (trust.claimObj.trust) ? 1 : -1;
                 } else {
-                    result.networkScore += (trust.attributesObj.trust) ? 1 : -1;
+                    result.networkScore += (trust.claimObj.trust) ? 1 : -1;
                 }
             }
         }
