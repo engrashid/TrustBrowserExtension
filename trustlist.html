@@ -64,12 +64,12 @@
                         </td>
                         <td>
                             <div>Alias:{{ subject.alias }}</div>
-                            <div>Address: {{ subject.addressEncoded }} - 
+                            <div>Address: {{ subject.address }} - 
                                 <a href="#" ng-click="trustClick(subject);" ng-title="Trust {{ subject.alias }}">[T]</a>
                                 <a href="#" ng-click="distrustClick(subject);" ng-title="Distrust {{ subject.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(subject);" ng-title="Untrust {{ subject.alias }}">[U]</a>
                             </div>
-                            <div ng-hide="!subject.owner.address" class="small">Owner entity: <img ng-src="data:image/svg+xml;base64,{{ subject.owner.identiconData16 }}" ng-click="analyseClick(subject.owner)"> {{ subject.owner.addressEncoded }}</div>
+                            <div ng-hide="!subject.owner.address" class="small">Owner entity: <img ng-src="data:image/svg+xml;base64,{{ subject.owner.identiconData16 }}" ng-click="analyseClick(subject.owner)"> {{ subject.owner.address }}</div>
                         </td>
                         <td>
                         </td>
@@ -87,7 +87,7 @@
                         </td>
                         <td>
                             <div ng-hide="!trust.alias">Alias: {{ trust.alias }}</div>
-                            <div>Address: {{ trust.issuer.addressEncoded }} - 
+                            <div>Address: {{ trust.issuer.address }} - 
                                 <a href="#" ng-click="trustClick(trust);" ng-title="Trust {{ trust.alias }}" ng-show="trust.showTrustButton">[T]</a>
                                 <a href="#" ng-click="distrustClick(trust);" ng-title="Trust {{ trust.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(trust);" ng-title="Trust {{ trust.alias }}">[U]</a>
@@ -111,7 +111,7 @@
                         </td>
                         <td>
                             <div ng-hide="!trust.alias">Alias: {{ trust.alias }}</div>
-                            <div>Address: {{ trust.issuer.addressEncoded }} - 
+                            <div>Address: {{ trust.issuer.address }} - 
                                 <a href="#" ng-click="trustClick(trust);" ng-title="Trust {{ trust.alias }}">[T]</a>
                                 <a href="#" ng-click="distrustClick(trust);" ng-title="Trust {{ trust.alias }}">[D]</a>
                                 <a href="#" ng-click="untrustClick(trust);" ng-title="Trust {{ trust.alias }}">[U]</a>

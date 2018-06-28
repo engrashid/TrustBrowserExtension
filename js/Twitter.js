@@ -46,8 +46,8 @@
             if(!this.trustHandler) 
                 return;
 
-            let ownerAddress = (this.profile.owner) ? this.profile.owner.address.toBase64() : "";
-            this.profile.result = this.trustHandler.CalculateBinaryTrust(this.profile.address.toBase64(), ownerAddress);
+            let ownerAddress = (this.profile.owner) ? this.profile.owner.address : "";
+            this.profile.result = this.trustHandler.CalculateBinaryTrust(this.profile.address, ownerAddress);
         }
 
 
@@ -197,7 +197,7 @@
         }
 
         ProfileController.verifyDTPsignature = function(dtp, message) {
-            return tce.bitcoin.message.verify(dtp.address.toAddress(), dtp.signature, message);
+            return tce.bitcoin.message.verify(dtp.address, dtp.signature, message);
         }
 
         ProfileController.loadProfile = function(screen_name, profileRepository) {
@@ -312,7 +312,7 @@
 
             // if (profile.owner) {
             //     if(!profile.owner.data) {
-            //         let icon = new Identicon(profile.owner.address.toAddress(), {margin:0.1, size:16, format: 'svg'});
+            //         let icon = new Identicon(profile.owner.address, {margin:0.1, size:16, format: 'svg'});
             //         profile.owner.identiconData16 = icon.toString();
             //         profile.time = Date.now();
             //         profile.controller.save();
@@ -321,7 +321,7 @@
             // } else {
             
             if(!profile.identiconData16) {
-                let icon = new Identicon(profile.address.toDTPAddress(), {margin:0.1, size:16, format: 'svg'});
+                let icon = new Identicon(profile.address, {margin:0.1, size:16, format: 'svg'});
                 profile.identiconData16 = icon.toString();
                 profile.time = Date.now();
                 profile.controller.save();
@@ -329,7 +329,7 @@
             iconData = profile.identiconData16;
             //}
 
-            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0" title"'+ profile.address.toDTPAddress() +'"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
+            let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0" title"'+ profile.address +'"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
             $icon.data("dtp_profile", profile);
             $icon.click(function() {
                 var opt = {
@@ -382,7 +382,7 @@
         function Profile(screen_name) { 
             this.screen_name = screen_name;
             this.alias = screen_name;
-            this.address = screen_name.hash160();
+            this.address = screen_name.hash160().toDTPAddress();
             this.scope = window.location.hostname;
         }
 
@@ -392,7 +392,7 @@
             if(settings.address) {
                 Profile.Current.owner = {
                     scope: '',
-                    address: settings.publicKeyHash,
+                    address: settings.address,
                     signature: tce.bitcoin.message.sign(settings.keyPair, Profile.Current.screenName),
                     valid : true
                 };
@@ -469,25 +469,6 @@
         TwitterService.prototype.sendTweet = function (data) {
             return this.postData('/i/tweet/create', data);
         }
-
-        // TwitterService.prototype.updateProfile = function () {
-        //     let self = this;
-
-        //     let address = self.settings.address;
-        //     //let nameBuffer = new tce.buffer.Buffer("test", 'utf8');
-        //     let signatureBuffer = tce.bitcoin.Bitcoin.sign(self.settings.keyPair, "test");
-        //     let signature = signatureBuffer.toString('base64');
-        //     //let nameHash = tce.bitcoin.crypto.hash256(nameBuffer);
-        //     //let signatureBuffer = self.settings.keyPair.signCompact(nameHash);
-        //     //let signature = signatureBuffer.toString('base58');
-
-        //     let description = '#DTP+Address:' + address + '+Signature:' + signature;
-
-        //     let url = TwitterService.BaseUrl+'/i/profiles/update'; //?description=MyTime:'+today.toISOString() ;
-        //     let data = 'page_context=me&section_context=profile&user%5Bdescription%5D=' + description;
-        //     this.postData(url, data);
-
-        // }
 
         TwitterService.prototype.postData = function (path, data) {
             let self = this;
@@ -617,7 +598,7 @@
         Twitter.prototype.tweetDTP = function() {
             const self = this;
 
-            let status = 'Digital Trust Protocol #DTP \rAddress:' + DTP.Profile.Current.owner.address.toAddress()
+            let status = 'Digital Trust Protocol #DTP \rAddress:' + DTP.Profile.Current.owner.address
                          + ' \rSignature:' + DTP.Profile.Current.owner.signature.toBase64();
             let data = {
                 batch_mode:'off',

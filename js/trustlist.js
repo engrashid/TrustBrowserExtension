@@ -31,7 +31,6 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.init();
         $scope.subject = subject;
         $scope.trustHandler = new TrustHandler($scope.subject.queryResult, $scope.settings);
-        $scope.subject.addressEncoded = $scope.subject.address.toDTPAddress();
         $scope.subject.identiconData64 = $scope.getIdenticoinData($scope.subject.address);
         //$scope.subject.addressClass = (this.subject.type != "thing") ? "text-primary": "";
         //$scope.subject.aliasClass = (this.subject.type == "thing") ? "text-primary": "";
@@ -41,7 +40,6 @@ app.controller("trustlistCtrl", function($scope) {
 
         // The subject has an owner
         if($scope.subject.owner.address) {
-            $scope.subject.owner.addressEncoded = $scope.subject.owner.address.toAddress();
             $scope.subject.owner.identiconData16 = $scope.getIdenticoinData($scope.subject.owner.address, 16);
         }
 
@@ -54,9 +52,8 @@ app.controller("trustlistCtrl", function($scope) {
             trust.address = trust.issuer.address; // Use for Trust/Distrust/Untrust
 
             // If trust is a BinaryTrust, decorate the trust object with data
-            if(trust.type == PackageBuilder.BINARYTRUST_TC1) {
+            if(trust.type == PackageBuilder.BINARY_TRUST_DTP1) {
                 $scope.binarytrusts[trust.subject.address] = trust;
-                trust.issuer.addressEncoded = trust.issuer.address.toAddress();
                 trust.identiconData64 = $scope.getIdenticoinData(trust.issuer.address);
 
                 // Add trust to the right list
@@ -79,7 +76,7 @@ app.controller("trustlistCtrl", function($scope) {
         for(var index in $scope.subject.trusts) {
             var trust = $scope.subject.trusts[index];
             // Ensure alias on trust, if exist
-            if(trust.type === PackageBuilder.ALIAS_IDENTITY_TC1) {
+            if(trust.type === PackageBuilder.ALIAS_IDENTITY_DTP1) {
                 $scope.binarytrusts[trust.subject.address].alias = trust.claimObj.alias + (($scope.subject.binaryTrust.direct) ? " (You)": "");
             }
         }
@@ -107,7 +104,7 @@ app.controller("trustlistCtrl", function($scope) {
 
     $scope.getIdenticoinData = function(address, size) {
         if(!size) size = 64;
-        return new Identicon(address.toDTPAddress(), {margin:0.1, size:size, format: 'svg'}).toString();
+        return new Identicon(address, {margin:0.1, size:size, format: 'svg'}).toString();
     };
 
     $scope.trustDataClick = function(trust) {

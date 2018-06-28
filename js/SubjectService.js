@@ -45,9 +45,9 @@ var SubjectService = (function() {
 
     SubjectService.prototype.BuildBinaryTrust = function(profile, value, note, expire) {
         var trust = this.packageBuilder.CreateBinaryTrust(
-            this.settings.publicKeyHash, 
+            this.settings.address, 
             this.SCRIPT, 
-            profile.address.base64ToBuffer(), 
+            profile.address, 
             value, 
             note,
             profile.scope,
@@ -56,13 +56,11 @@ var SubjectService = (function() {
 
         var package = this.packageBuilder.CreatePackage(trust);
 
-        if(profile.owner) {
-            //var subjectAddress = new tce.buffer.Buffer(profile.owner.address, 'HEX');
-            let subjectAddress = profile.owner.address.base64ToBuffer();
+        if(profile.owner && profile.owner.address) {
             var ownerTrust = this.packageBuilder.CreateBinaryTrust(
-                this.settings.publicKeyHash, 
+                this.settings.address, 
                 this.SCRIPT, 
-                subjectAddress, 
+                profile.owner.address, 
                 value, 
                 note,
                 "", // Do not use scope on global identity
@@ -72,9 +70,9 @@ var SubjectService = (function() {
 
             if(!isNullOrWhitespace(profile.alias)) { 
                 var aliastrust = this.packageBuilder.CreateAliasIdentityTrust(
-                    this.settings.publicKeyHash,
+                    this.settings.address,
                     this.SCRIPT, 
-                    subjectAddress,
+                    profile.owner.address,
                     { alias: profile.alias },
                     profile.scope,
                     0,

@@ -38,7 +38,7 @@ var TrustchainService = (function() {
             scope = { value : scope };
 
         var obj = {
-            "issuers": this.settings.publicKeyHash,
+            "issuers": this.settings.address,
             "subjects": subjects,
     
             // Scope is used to filter on trust resolvement. It can be any text
@@ -46,7 +46,7 @@ var TrustchainService = (function() {
     
             // Claim made about the subject. The format is specified by the version property in the header section.
             "types": [
-                "binarytrust.tc1",
+                "binary.trust.tc1",
                 "alias.identity.tc1"
               ],
             "level": 0, // Use default level search (0)

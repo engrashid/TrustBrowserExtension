@@ -27,12 +27,12 @@ var PackageBuilder = (function() {
     {
         var claim = (value !== undefined) ? { trust: value } : undefined;
             
-        return this.CreateTrust(issuer, script, subject, PackageBuilder.BINARYTRUST_TC1, scope, JSON.stringify(claim), activate, expire, note);
+        return this.CreateTrust(issuer, script, subject, PackageBuilder.BINARY_TRUST_DTP1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
     PackageBuilder.prototype.CreateAliasIdentityTrust = function(issuer, script, subject, claim, scope, activate, expire, note)
     {
-        return this.CreateTrust(issuer, script, subject, PackageBuilder.ALIAS_IDENTITY_TC1, scope, JSON.stringify(claim), activate, expire, note);
+        return this.CreateTrust(issuer, script, subject, PackageBuilder.ALIAS_IDENTITY_DTP1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
     PackageBuilder.prototype.CreateTrust = function(issuer, script, subject, type, scope, claim, activate, expire, note)  {
@@ -74,8 +74,10 @@ var PackageBuilder = (function() {
                 offset += buf.write(trust.issuer.type.toLowerCase(), offset);
 
             if(trust.issuer.address) {
-                var address = trust.issuer.address.base64ToBuffer();
-                offset += address.copy(buf, offset, 0, trust.issuer.address.length);
+                //var address = trust.issuer.address.base64ToBuffer();
+                //offset += address.copy(buf, offset, 0, trust.issuer.address.length);
+                offset += buf.write(trust.issuer.address, offset);
+
             }
         }
 
@@ -84,8 +86,9 @@ var PackageBuilder = (function() {
                 offset += buf.write(trust.subject.type.toLowerCase(), offset);
 
             if(trust.subject.address) {
-                var subjectaddress = trust.subject.address.base64ToBuffer();
-                offset += subjectaddress.copy(buf, offset, 0, trust.subject.address.length); // Bytes!
+                // var subjectaddress = trust.subject.address.base64ToBuffer();
+                // offset += subjectaddress.copy(buf, offset, 0, trust.subject.address.length); // Bytes!
+                offset += buf.write(trust.subject.address, offset);
             }
         }
 
@@ -114,11 +117,11 @@ var PackageBuilder = (function() {
         trust.id = tce.bitcoin.crypto.hash256(data); 
     }
 
-    PackageBuilder.BINARYTRUST_TC1 = "binarytrust.tc1";
-    PackageBuilder.CONFIRMTRUST_TC1 = "confirm.tc1";
-    PackageBuilder.RATING_TC1 = "rating.tc1";
-    PackageBuilder.IDENTITY_TC1 = "identity.tc1";
-    PackageBuilder.ALIAS_IDENTITY_TC1 = "alias.identity.tc1";
+    PackageBuilder.BINARY_TRUST_DTP1 = "binary.trust.dtp1";
+    PackageBuilder.CONFIRM_TRUST_DTP1 = "confirm.trust.dtp1";
+    PackageBuilder.RATING_TRUST_DTP1 = "rating.trust.dtp1";
+    PackageBuilder.IDENTITY_DTP1 = "identity.dtp1";
+    PackageBuilder.ALIAS_IDENTITY_DTP1 = "alias.identity.dtp1";
 
     return PackageBuilder;
 }())

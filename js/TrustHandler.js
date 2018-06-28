@@ -32,7 +32,7 @@ var TrustHandler = (function() {
     }
 
 
-    TrustHandler.prototype.CalculateBinaryTrust = function(subjectAddressBase64, ownerAddressBase64) {
+    TrustHandler.prototype.CalculateBinaryTrust = function(subjectAddress, ownerAddress) {
         var self = this;
         var result = {
             direct : false,
@@ -43,8 +43,8 @@ var TrustHandler = (function() {
 
         var binaryTrustCount = 0;
         
-        var subjectTrusts = self.subjects[subjectAddressBase64];
-        var ownerTrusts = self.subjects[ownerAddressBase64];
+        var subjectTrusts = self.subjects[subjectAddress];
+        var ownerTrusts = self.subjects[ownerAddress];
         if(!subjectTrusts && !ownerTrusts)
             return result;
 
@@ -52,7 +52,7 @@ var TrustHandler = (function() {
             if(!trusts) return;
             for(var i in trusts) {
                 var trust = subjectTrusts[i];
-                if(trust.type === PackageBuilder.BINARYTRUST_TC1) {
+                if(trust.type === PackageBuilder.BINARY_TRUST_DTP1) {
                     binaryTrustCount ++;
 
                     if(trust.claimObj.trust === true) 
@@ -78,7 +78,7 @@ var TrustHandler = (function() {
         return result;
     }
 
-    TrustHandler.prototype.CalculateBinaryTrust2 = function(subjectAddressBase64, ownerAddressBase64) {
+    TrustHandler.prototype.CalculateBinaryTrust2 = function(subjectAddress, ownerAddress) {
         var self = this;
         var result = {
             networkScore : 0,
@@ -86,8 +86,8 @@ var TrustHandler = (function() {
         };
         //var binaryTrustCount = 0;
         
-        var subjectTrusts = self.subjects[subjectAddressBase64];
-        var ownerTrusts = self.subjects[ownerAddressBase64];
+        var subjectTrusts = self.subjects[subjectAddress];
+        var ownerTrusts = self.subjects[ownerAddress];
         if(!subjectTrusts && !ownerTrusts)
             return result;
 
@@ -96,7 +96,7 @@ var TrustHandler = (function() {
             for(const key in trusts) {
                 const trust = trusts[key];
 
-                if(trust.type != PackageBuilder.BINARYTRUST_TC1)
+                if(trust.type != PackageBuilder.BINARY_TRUST_DTP1)
                     continue;
 
                 //binaryTrustCount ++;
