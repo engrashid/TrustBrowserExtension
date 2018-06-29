@@ -420,17 +420,19 @@
                 let content = html.findSubstring('<div class="js-tweet-text-container">', '</div>');
                 if(content == null) {
                     deferred.resolve(null);
+                    return;
                 }
    
                 let text = $(content).text();
-                text = text.replace(/(?:\r\n|\r|\n)/g, ' ');
+                text = text.replace(/(?:\r\n|\r|\n)/g, ' ').trim();
 
-                let btcAddress = text.findSubstring('Address:', ' ', true, true);
-                let hash = tce.bitcoin.address.fromBase58Check(btcAddress, 30).hash;
-                
+                if(text.length === 0) {
+                    deferred.resolve(null);
+                    return;
+                }
 
                 let result = {
-                    address: hash.toBase64(),
+                    address: text.findSubstring('Address:', ' ', true, true),
                     signature: text.findSubstring('Signature:', ' ', true, true),
                     scope: '', // global
                 }
@@ -574,6 +576,8 @@
                 if (result && result.status == "Success") {
                     DTP.trace(JSON.stringify(result, null, 2));
                     let th = new TrustHandler(result.data.results, self.settings);
+                    th.BuildSubjects();
+                    
                     for (let key in profiles) {
                         if (!profiles.hasOwnProperty(key))
                             continue;

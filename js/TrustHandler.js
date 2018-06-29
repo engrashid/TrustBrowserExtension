@@ -8,8 +8,7 @@ var TrustHandler = (function() {
         this.settings = settings;
         this.package = package;
         this.subjects = [];
-        this.BuildSubjects();
-
+        this.alias = [];
     }
 
     TrustHandler.prototype.BuildSubjects = function() {
@@ -21,13 +20,28 @@ var TrustHandler = (function() {
             var trust = this.package.trusts[trustIndex];
             trust.claimObj = JSON.parse(trust.claim);
 
-            var list = this.subjects[trust.subject.address];
-            if(!list) {
-                list = []
-                this.subjects[trust.subject.address] = list;
-            } 
+            if(trust.type === PackageBuilder.BINARY_TRUST_DTP1) {
+                var list = this.subjects[trust.subject.address];
 
-            list[trust.issuer.address] = trust;
+                if(!list) {
+                    list = [];
+                    this.subjects[trust.subject.address] = list;
+                } 
+
+                list.push(trust);
+            }
+
+            if(trust.type === PackageBuilder.ALIAS_IDENTITY_DTP1) {
+                var list = this.alias[trust.subject.address];
+
+                if(!list) {
+                    list = [];
+                    this.alias[trust.subject.address] = list;
+                } 
+
+                list.push(trust);
+            }
+
         }
     }
 
@@ -60,7 +74,7 @@ var TrustHandler = (function() {
                     else
                         result.distrust++;
                                     // IssuerAddress is base64
-                    if(trust.issuer.address == self.settings.publicKeyHashBase64)
+                    if(trust.issuer.address == self.settings.address)
                     {
                         result.direct = true;
                         result.directValue = trust.claimObj.trust;
@@ -101,7 +115,7 @@ var TrustHandler = (function() {
 
                 //binaryTrustCount ++;
 
-                if(trust.issuer.address == self.settings.publicKeyHashBase64) { // Its your trust!
+                if(trust.issuer.address == self.settings.address) { // Its your trust!
                     result.personalScore += (trust.claimObj.trust) ? 1 : -1;
                 } else {
                     result.networkScore += (trust.claimObj.trust) ? 1 : -1;

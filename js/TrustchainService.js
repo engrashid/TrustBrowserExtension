@@ -46,8 +46,8 @@ var TrustchainService = (function() {
     
             // Claim made about the subject. The format is specified by the version property in the header section.
             "types": [
-                "binary.trust.tc1",
-                "alias.identity.tc1"
+                "binary.trust.dtp1",
+                "alias.identity.dtp1"
               ],
             "level": 0, // Use default level search (0)
             //"flags": "LeafsOnly"
@@ -69,7 +69,7 @@ var TrustchainService = (function() {
 
 
     TrustchainService.prototype.GetTrustTemplate = function(subject, alias) {
-        var url ='/api/trust/build?issuer='+settings.publicKeyHash+'&subject='+subject+'&alias='+alias;
+        var url ='/api/trust/build?issuer='+settings.address+'&subject='+subject+'&alias='+alias;
     
         return this.GetData(url);
     }

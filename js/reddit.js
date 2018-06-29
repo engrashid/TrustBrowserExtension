@@ -83,7 +83,7 @@ var Reddit = (function () {
                 '/resources/proof.htm' +
                 '?scope=reddit.com' +
                 '&script=btc-pkh' +
-                '&address=' + settings.publicKeyHash.toString('HEX') +
+                '&address=' + settings.address +
                 '&signature=' + signature.toString('HEX') +
                 '&hash=' + hash.toString('HEX') +
                 '&name=' + username +

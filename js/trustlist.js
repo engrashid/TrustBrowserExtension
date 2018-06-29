@@ -20,7 +20,6 @@ app.controller("trustlistCtrl", function($scope) {
     $scope.settingsController = new SettingsController();
     $scope.settingsController.loadSettings(function (settings) {
         $scope.settings = settings;
-        $scope.settings.publicKeyHashBase64 = $scope.settings.publicKeyHash.toString('base64');
         $scope.packageBuilder = new PackageBuilder(settings);
         $scope.subjectService = new SubjectService(settings, $scope.packageBuilder);
         $scope.trustchainService = new TrustchainService(settings);
@@ -31,9 +30,9 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.init();
         $scope.subject = subject;
         $scope.trustHandler = new TrustHandler($scope.subject.queryResult, $scope.settings);
+        $scope.trustHandler.BuildSubjects();
+
         $scope.subject.identiconData64 = $scope.getIdenticoinData($scope.subject.address);
-        //$scope.subject.addressClass = (this.subject.type != "thing") ? "text-primary": "";
-        //$scope.subject.aliasClass = (this.subject.type == "thing") ? "text-primary": "";
 
         if(!$scope.subject.owner)
             $scope.subject.owner = {}
@@ -67,19 +66,17 @@ app.controller("trustlistCtrl", function($scope) {
                 trust.showUntrustButton = $scope.subject.binaryTrust.direct;
 
 
-
-                if($scope.subject.binaryTrust.direct) 
+                var alias = $scope.trustHandler.alias[trust.issuer.address];
+                if(alias && alias.length > 0) {
+                    var item = alias[0];
+                    trust.alias = item.claimObj.alias + (trust.showUntrustButton ? " (You)": "");
+                } else {
+                  if($scope.subject.binaryTrust.direct) 
                     trust.alias = "(You)";
+                }
             }
         }
 
-        for(var index in $scope.subject.trusts) {
-            var trust = $scope.subject.trusts[index];
-            // Ensure alias on trust, if exist
-            if(trust.type === PackageBuilder.ALIAS_IDENTITY_DTP1) {
-                $scope.binarytrusts[trust.subject.address].alias = trust.claimObj.alias + (($scope.subject.binaryTrust.direct) ? " (You)": "");
-            }
-        }
         
         $scope.json = JSON.stringify(subject, undefined, 2);
         $scope.showContainer = true;
