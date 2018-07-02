@@ -16,12 +16,9 @@
 <body>
 
     <nav class="navbar navbar-default" role="navigation">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Trust</a>
-        </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav" data-tabs="tabs">
-                <li class="active"><a href="#usercontainer" data-toggle="tab">User</a></li>
+                <li class="active"><a href="#usercontainer" data-toggle="tab">Trust</a></li>
                 <li><a href="#settingscontainer" data-toggle="tab">Settings</a></li>
                 <li><a href="#servercontainer" data-toggle="tab">Server</a></li>
                 <li><a href="#aboutcontainer" data-toggle="tab">About</a></li>
@@ -35,7 +32,7 @@
             <div id="my-tab-content" class="tab-content">
                 <div id="usercontainer" class="tab-pane active">
                     <h3 class="form-signin-heading">User identity</h3>
-                    <p>The user account ID are generated from the Password and the additional seed (optional). No signup is needed.</p>
+                    <p>The user account ID is generated from the Password and the additional seed (optional). No signup is needed. NB! The password is not encrypted on the client and may be very insecure. The password and seed will never be submittet to the server.</p>
                     <div><label for="inputPassword">Password</label></div>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -80,17 +77,17 @@
                 </div>
                 <div id="settingscontainer" class="tab-pane">
                     <h3 class="form-signin-heading">Trust settings</h3>
-                    <div>Behavior of rendering trust</div>
-                    <div>Twitter settings</div>
-                    <div class="input-group">
+                    <!-- <div>Behavior of rendering trust</div>
+                    <div>Twitter settings</div> -->
+                    <!-- <div class="input-group">
                         <div class="radio">
                             <label><input type="radio" name="twittertrustradio" value="noaction">No action</label>
                         </div>
                         <div class="radio">
                             <label><input type="radio" name="twittertrustradio" value="autofollow">Auto follow</label>
                         </div>
-                    </div>
-                    <p>Behavior of rendering distrust</p>
+                    </div> -->
+                    <p><b>Behavior of rendering distrust</b></p>
                     <div class="input-group">
                         <div class="radio">
                             <label><input type="radio" name="twitterdistrustradio" value="noaction">No action</label>
@@ -150,8 +147,17 @@
                 </div>
                 <div id="aboutcontainer" class="tab-pane">
                     <h3 class="form-signin-heading">About</h3>
+                    <h4>Version 0.1</h4>
+                    <div>This is an Alpha release and it may change in the future.</div>
+                    <h4>Terms and conditions</h4>
                     <div>
-                        <div>Github repositories</div>
+                        By using this product, you agree that everything that you submit to the server will be available to everyone else, that includes anonymous entities.
+                        There is no encryption of data or privacy, therefore anyone may use this data as they see fit.
+                        Do not submit data that you do not what to share with everyone.
+                        This is an open platform where the sharing of “Trust” is the basics of the system. Data stored on client is for caching purposes.
+                    </div>
+                    <div>
+                        <h4>Github repositories</h4>
                         <div><a href="https://github.com/DigitalTrustProtocol/Whitepaper" target="_blank">Whitepaper</a></div>
                         <div><a href="https://github.com/DigitalTrustProtocol/TrustBrowserExtension" target="_blank">DTP Browser Extension</a></div>
                         <div><a href="https://github.com/DigitalTrustProtocol/DtpSolution" target="_blank">DTP Server</a></div>
@@ -160,7 +166,7 @@
             </div>
         </form>
         <div>
-            <button id="savebtn" class="btn btn-lg btn-primary btn-block" type="button">Save</button>
+            <!-- <button id="savebtn" class="btn btn-lg btn-primary btn-block" type="button">Save</button> -->
         </div>
     </section>
 

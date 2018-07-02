@@ -1,39 +1,51 @@
 var controller = new SettingsController();
-
+var settings = null;
 // Onload
 $(function () {
     controller.loadSettings(function (items) {
+        settings = items;
         BindSettings(items);
     });
 });
 
+
+$(document).keyup(function(e) {
+    Save(settings);
+});
+
+$(document).change(function(){
+    Save(settings);
+});
 
 $("#savebtn").click(function () {
-    controller.loadSettings(function (items) {
-        items["password"] = $("#inputPassword").val();
-        items["seed"] = $("#inputSeed").val();
-        items["rememberme"] = $("#rememberMe").prop('checked');
-        items["infoserver"] = $("#trustserver").val();
-        
-        items["trustrender"] = $("input[name='trustrenderradio']:checked").val();
-        items["trustrendercolor"] = "#EEFFDD";
-        items["trustrendericon"] = "check16.png";
-
-        items["resultrender"] = $("input[name='resultrenderradio']:checked").val();
-        items["resultrendercolor"] = "lightpink";
-        items["resultrendericon"] = "close16.png";
-        items["resultrenderhide"] = $("#distrusthide").prop('checked');
-
-
-        items["twittertrust"] = $("input[name='twittertrustradio']:checked").val();
-        items["twitterdistrust"] = $("input[name='twitterdistrustradio']:checked").val();
-
-        
-        controller.saveSettings(items);
-        controller.buildKey(items);
-        BindSettings(items);
-    });
+    Save(settings);
 });
+
+function Save(items) {
+    items["password"] = $("#inputPassword").val();
+    items["seed"] = $("#inputSeed").val();
+    items["rememberme"] = $("#rememberMe").prop('checked');
+    items["infoserver"] = $("#trustserver").val();
+    
+    items["trustrender"] = $("input[name='trustrenderradio']:checked").val();
+    items["trustrendercolor"] = "#EEFFDD";
+    items["trustrendericon"] = "check16.png";
+
+    items["resultrender"] = $("input[name='resultrenderradio']:checked").val();
+    items["resultrendercolor"] = "lightpink";
+    items["resultrendericon"] = "close16.png";
+    items["resultrenderhide"] = $("#distrusthide").prop('checked');
+
+
+    items["twittertrust"] = $("input[name='twittertrustradio']:checked").val();
+    items["twitterdistrust"] = $("input[name='twitterdistrustradio']:checked").val();
+
+    
+    controller.saveSettings(items);
+    controller.buildKey(items);
+    BindSettings(items);
+
+}
 
 function BindSettings(items) {
     $("#inputPassword").val(items.password);
