@@ -414,33 +414,61 @@
             this.settings = settings;
         }
 
+
+
+        // TwitterService.prototype.searchProfilesDTP = function (screen_names) {
+        //     let from = screen_names.map(function(val,index,arr) { return '%20from%3A'+val; });
+        //     let nameQuery = from.join('%20OR');
+        
+        //     ///search?f=tweets&q=%23DTP%20address%20signature%20from%3Atrustprotocol%20OR%20from%3Akeutmann&src=typd
+        //     let url = '/search?f=tweets&q=%23DTP%20address%20signature' + nameQuery + '&src=typd';
+        //     if(url.length > 4096) {
+        //         DTP.trace("function searchProfilesDTP query string is too long. Length: "+url.length);
+        //     }
+        //     this.getData(url, 'html').then((html) => {
+
+        //         let result = extractDTP(html);
+
+        //         deferred.resolve(result);
+        //     }).fail((error) => deferred.fail(error));
+
+        // }
+
         TwitterService.prototype.getProfileDTP = function (screen_name) {
             let deferred = $.Deferred();
-            this.getData('/search?l=&q=%23DTP%20Address%20Signature%20from%3A'+ screen_name +'&src=typd', 'html').then((html) => {
-                let content = html.findSubstring('<div class="js-tweet-text-container">', '</div>');
-                if(content == null) {
-                    deferred.resolve(null);
-                    return;
-                }
-   
-                let text = $(content).text();
-                text = text.replace(/(?:\r\n|\r|\n)/g, ' ').trim();
+            let url = '/search?f=tweets&q=%23DTP%20Address%20Signature%20from%3A'+ screen_name +'&src=typd';
+            this.getData(url, 'html').then((html) => {
 
-                if(text.length === 0) {
-                    deferred.resolve(null);
-                    return;
-                }
+                let $body = $(html);
+                let tweets = $body.find()
+                let result = this.extractDTP(html);
 
-                let result = {
-                    address: text.findSubstring('Address:', ' ', true, true),
-                    signature: text.findSubstring('Signature:', ' ', true, true),
-                    scope: '', // global
-                }
                 deferred.resolve(result);
-                
             }).fail((error) => deferred.fail(error));
 
             return deferred;
+        }
+
+        TwitterService.prototype.extractDTP = function (html) {
+            let content = html.findSubstring('<div class="js-tweet-text-container">', '</div>');
+            if(content == null) {
+                return null;
+            }
+
+            let text = $(content).text();
+            text = text.replace(/(?:\r\n|\r|\n)/g, ' ').trim();
+
+            if(text.length === 0) {
+                return null;
+            }
+
+            let result = {
+                address: text.findSubstring('Address:', ' ', true, true),
+                signature: text.findSubstring('Signature:', ' ', true, true),
+                scope: '', // global
+            }
+
+            return result;
         }
 
         TwitterService.prototype.getData = function (path, dataType) {
