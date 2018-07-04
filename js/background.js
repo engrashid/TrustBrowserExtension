@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request.command === 'updateContent') {
         chrome.tabs.sendMessage(request.contentTabId, request, function(result) {
-            console.log('updateContent is '+result.status);
+            console.log(result);
         });
     }
     return false;

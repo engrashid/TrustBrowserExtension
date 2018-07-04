@@ -44,7 +44,9 @@ var SubjectService = (function() {
 
 
     SubjectService.prototype.BuildBinaryTrust = function(profile, value, note, expire) {
-        var trust = this.packageBuilder.CreateBinaryTrust(
+        let trust = undefined;
+        if(profile.address) {
+            trust = this.packageBuilder.CreateBinaryTrust(
             this.settings.address, 
             this.SCRIPT, 
             profile.address, 
@@ -53,8 +55,9 @@ var SubjectService = (function() {
             profile.scope,
             0,
             expire);
-
-        var package = this.packageBuilder.CreatePackage(trust);
+        }
+        
+        let package = this.packageBuilder.CreatePackage(trust);
 
         if(profile.owner && profile.owner.address) {
             var ownerTrust = this.packageBuilder.CreateBinaryTrust(
@@ -79,7 +82,6 @@ var SubjectService = (function() {
                     expire);
 
                 package.trusts.push(aliastrust);
-    
             }
         }
         return package;

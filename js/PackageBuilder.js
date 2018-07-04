@@ -9,7 +9,7 @@ var PackageBuilder = (function() {
 
     PackageBuilder.prototype.CreatePackage = function(trust) {
         var package = {
-            trusts: [trust]
+            trusts: (trust) ? [trust] : []
         }
         return package;
     }

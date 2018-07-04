@@ -700,6 +700,10 @@
             });
         }
 
+        Twitter.prototype.updateContent = function () {
+            this.queryDTP(this.sessionProfiles);
+        }
+
         return Twitter;
     }(jQuery));
 
@@ -716,5 +720,12 @@ settingsController.loadSettings(function (settings) {
 
     var twitter = new DTP.Twitter(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository);
 
+    // Update the content when trust changes on the Trustlist.html popup
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        if (request.command === 'updateContent') {
+            twitter.updateContent();
+        }
+    });
+    
     twitter.ready(document);
 });
