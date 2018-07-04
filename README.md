@@ -1,2 +1,2 @@
-# Trust Chrome Extension
+# Trust Browser Extension
 A client interface for issuing Trust
