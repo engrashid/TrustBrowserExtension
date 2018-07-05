@@ -1,23 +1,39 @@
 
-var currentTab = null;
-var currentWindow = null;
+var popupTab = null;
+var popupWindow = null;
+var profileData = null;
+var contentTabId = null;
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.command === 'openDialog') {
-        GetCurrentWindow(function(window) {
+        profileData = request.data;
+        contentTabId = sender.tab.id;
+        // Open up the Popup window
+        GetpopupWindow(function(window) {
+            // Make sure the reuse an existing popup if exists.
             if(!window)
-                OpenDialog(request, sender.tab.id);
+                OpenDialog(request, contentTabId);
             else
-                SendMessageToDialog('showTarget', request.data, sender.tab.id);
+                SendMessageToDialog('showTarget', profileData, contentTabId);
         });
         return;
     }
 
+    // Waiting for the request of data from the Popup
+    if (request.command === 'requestData') {
+        // Response with the profile data to the popup
+        sendResponse({ data: profileData, contentTabId: contentTabId });
+        chrome.windows.update(popupWindow.id, {focused:true });
+    }
+
+    // Waiting for the request to update the client window after new trust has been issued.
     if (request.command === 'updateContent') {
+        // Send message to the client window
         chrome.tabs.sendMessage(request.contentTabId, request, function(result) {
             console.log(result);
         });
     }
+
     return false;
 });
 
@@ -29,7 +45,7 @@ function OpenDialog(request, contentTabId)
             url: chrome.extension.getURL(request.url), //'dialog.html'
             active: false
         }, function(tab) {
-            currentTab = tab;
+            popupTab = tab;
             // After the tab has been created, open a window to inject the tab
             chrome.windows.create({
                 tabId: tab.id,
@@ -42,10 +58,12 @@ function OpenDialog(request, contentTabId)
                 // incognito, top, left, ...
             }, 
                 function(window) {
-                    currentWindow = window;
-                    setTimeout(function() { 
-                        SendMessageToDialog('showTarget', request.data, contentTabId); 
-                    }, 100);
+                    popupWindow = window;
+
+                    // Replaced by the "requestData" message
+                    // setTimeout(function() { 
+                    //     SendMessageToDialog('showTarget', request.data, contentTabId); 
+                    // }, 100);
                     
                 });
         });
@@ -54,22 +72,22 @@ function OpenDialog(request, contentTabId)
     }
 }
 
-function GetCurrentWindow(cb)
+function GetpopupWindow(cb)
 {
-    if(!currentWindow) 
+    if(!popupWindow) 
         cb(null);
     else
-        chrome.windows.get(currentWindow.id, null, cb);
+        chrome.windows.get(popupWindow.id, null, cb);
 }
 
 chrome.windows.onRemoved.addListener(function (id) {
-    if(id == currentWindow.id)
-        currentWindow = null;
+    if(id == popupWindow.id)
+        popupWindow = null;
 });
 
 function SendMessageToDialog(command, target, contentTabId, cb) 
 {
-    chrome.tabs.sendMessage(currentTab.id, { command: command, data: target, contentTabId: contentTabId }, cb);
-    //chrome.tabs.update(currentTab.id, {active: true});
-    chrome.windows.update(currentWindow.id, {focused:true });
+    chrome.tabs.sendMessage(popupTab.id, { command: command, data: target, contentTabId: contentTabId }, cb);
+    //chrome.tabs.update(popupTab.id, {active: true});
+    chrome.windows.update(popupWindow.id, {focused:true });
 }

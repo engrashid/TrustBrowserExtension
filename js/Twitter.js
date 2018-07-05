@@ -570,14 +570,6 @@
                 let screen_name = element.attributes["data-screen-name"].value;
                 let profile = self.profileRepository.ensureProfile(screen_name, self.profileView);
 
-                //me = jQuery(this),
-                //tweet_id = me.data("tweet-id"),
-                //content = me.find(".content"),
-                //user_id = content.find(".stream-item-header a").data("user-id"),
-                //screen_name = content.find(".stream-item-header .username b").text();
-                //let $element = $(element);
-                //profile.tweet_id = $me.data("tweet_id");
-
                 DTP.ProfileController.addTo(profile, self, element);
                 
                 self.sessionProfiles[profile.screen_name] = profile; // All the profiles in the current page session

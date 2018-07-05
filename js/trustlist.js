@@ -1,25 +1,61 @@
-//var settingsController = new SettingsController();
-//var target;
-//var settings; 
-
-//https://www.reddit.com/user/trustchain/.json
-
 var app = angular.module("myApp", []);
 app.controller("trustlistCtrl", function($scope) {
 
-    chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-          if (request.command == "showTarget") {
-                $scope.contentTabId = request.contentTabId;
-                $scope.load(request.data);
-                sendResponse({result: "ok"});
-          }
-        });
-
-    $scope.showContainer = false; // Less flickring
-    $scope.history = [];
-
     $scope.init = function() {    
+        $scope.showContainer = false; // Less flickring
+        $scope.history = [];
+
+        console.log("Loading Settings");
+        $scope.settingsController = new SettingsController();
+        $scope.settingsController.loadSettings(function (settings) {
+            $scope.settings = settings;
+            $scope.packageBuilder = new PackageBuilder(settings);
+            $scope.subjectService = new SubjectService(settings, $scope.packageBuilder);
+            $scope.trustchainService = new TrustchainService(settings);
+
+            $scope.addListeners();
+            $scope.requestProfile(null); // Default 
+        });
+    }
+
+    $scope.requestProfile = function(profile_name) {
+        console.log("RequestData send to background page");
+        chrome.runtime.sendMessage({ command: 'requestData', profile_name: null }, function(response) {
+            console.log("RequestData response from background page");
+            console.log(response);
+
+            $scope.contentTabId = response.contentTabId;
+
+            $scope.loadOnData(response.data);
+        });
+    }
+
+    $scope.addListeners = function() {
+        console.log("Adding Listener for calls from the background page.");
+        chrome.runtime.onMessage.addListener(
+            function(request, sender, sendResponse) {
+                console.log("Listener request from background page");
+                console.log(request);
+
+                if (request.command == "showTarget") {
+                    $scope.contentTabId = request.contentTabId;
+                   
+                    $scope.loadOnData(request.data);
+
+                    if(sendResponse)
+                        sendResponse({result: "ok"});
+                }
+            });
+    }
+
+    $scope.loadOnData = function(profile) {
+        $scope.trustHandler = new TrustHandler(profile.queryResult, $scope.settings);
+        $scope.trustHandler.BuildSubjects();
+
+        $scope.load(profile);
+    }
+
+    $scope.reset = function() {
         $scope.subject = null;
         $scope.binarytrusts = [];
         $scope.trusted = [];
@@ -27,29 +63,20 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.jsonVisible = false;
     }
 
-    $scope.settingsController = new SettingsController();
-    $scope.settingsController.loadSettings(function (settings) {
-        $scope.settings = settings;
-        $scope.packageBuilder = new PackageBuilder(settings);
-        $scope.subjectService = new SubjectService(settings, $scope.packageBuilder);
-        $scope.trustchainService = new TrustchainService(settings);
-
-    });
-
     $scope.load = function(subject) {
-        $scope.init();
+        $scope.reset();
         $scope.subject = subject;
-        $scope.trustHandler = new TrustHandler($scope.subject.queryResult, $scope.settings);
-        $scope.trustHandler.BuildSubjects();
 
-        Object.defineProperty($scope.subject, 'identiconData64', { value: $scope.getIdenticoinData($scope.subject.address), writable: false });
+        if(!$scope.subject.identiconData64)
+            Object.defineProperty($scope.subject, 'identiconData64', { value: $scope.getIdenticoinData($scope.subject.address), writable: false });
 
         if(!$scope.subject.owner)
             $scope.subject.owner = {}
 
         // The subject has an owner
         if($scope.subject.owner.address) {
-            Object.defineProperty($scope.subject.owner, 'identiconData16', { value: $scope.getIdenticoinData($scope.subject.owner.address, 16), writable: false });
+            if(!$scope.subject.owner.identiconData16)
+                Object.defineProperty($scope.subject.owner, 'identiconData16', { value: $scope.getIdenticoinData($scope.subject.owner.address, 16), writable: false });
         }
 
         $scope.subject.trusts = $scope.trustHandler.subjects[$scope.subject.address];
@@ -58,16 +85,19 @@ app.controller("trustlistCtrl", function($scope) {
         for(var index in $scope.subject.trusts) {
             var trust = $scope.subject.trusts[index];
 
-            let owner = {  
-                address: trust.issuer.address
+            if(!trust.owner) {
+                let owner = {  
+                    address: trust.issuer.address
+                }
+                Object.defineProperty(trust, 'owner', { value: owner, writable: false });
             }
-            Object.defineProperty(trust, 'owner', { value: owner, writable: false });
 
             // If trust is a BinaryTrust, decorate the trust object with data
             if(trust.type == PackageBuilder.BINARY_TRUST_DTP1) {
                 $scope.binarytrusts[trust.subject.address] = trust;
 
-                Object.defineProperty(trust, 'identiconData64', { value: $scope.getIdenticoinData(trust.issuer.address), writable: false });
+                if(!trust.identiconData64)
+                    Object.defineProperty(trust, 'identiconData64', { value: $scope.getIdenticoinData(trust.issuer.address), writable: false });
 
                 // Add trust to the right list
                 if(trust.claimObj.trust)
@@ -104,13 +134,19 @@ app.controller("trustlistCtrl", function($scope) {
 
     $scope.analyseClick = function(trust) {
         $scope.history.push($scope.subject);
-        trust.queryResult = $scope.subject.queryResult;
-        $scope.load(trust); // Trust becomes the subject
+
+        let profile = {};
+        profile.address = trust.issuer.address;
+        profile.alias = trust.alias;
+        profile.screen_name = trust.alias;
+        profile.queryResult = $scope.subject.queryResult;
+
+        $scope.load(profile);
     }
 
 
     $scope.historyBack = function() {
-        $scope.load($scope.history.pop()); // Trust becomes the subject
+        $scope.load($scope.history.pop());
     }
 
     $scope.showHideJson = function() {
