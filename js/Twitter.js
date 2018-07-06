@@ -588,7 +588,7 @@
 
         Twitter.prototype.queryDTP = function (profiles) {
             let self = this;
-            if(!profiles) {
+            if(!profiles || Object.keys(profiles).length == 0) {
                 return;
             }
 

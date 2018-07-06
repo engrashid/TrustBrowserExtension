@@ -66,6 +66,7 @@ app.controller("trustlistCtrl", function($scope) {
     $scope.load = function(subject) {
         $scope.reset();
         $scope.subject = subject;
+        $scope.defaultScope = $scope.subject.scope;
 
         if(!$scope.subject.identiconData64)
             Object.defineProperty($scope.subject, 'identiconData64', { value: $scope.getIdenticoinData($scope.subject.address), writable: false });
@@ -83,7 +84,11 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.subject.binaryTrust = $scope.trustHandler.CalculateBinaryTrust($scope.subject.address);
 
         for(var index in $scope.subject.trusts) {
-            var trust = $scope.subject.trusts[index];
+            var t = $scope.subject.trusts[index];
+
+
+            let trust = $scope.packageBuilder.CreateTrust(t.issuer.address, t.issuer.script, t.subject.address, t.type, t.scope, t.claim, t.activate, t.expire, t.note);
+            trust.claimObj = t.claimObj;
 
             if(!trust.owner) {
                 let owner = {  
@@ -119,10 +124,17 @@ app.controller("trustlistCtrl", function($scope) {
                   if($scope.subject.binaryTrust.direct) 
                     trust.alias = "(You)";
                 }
-                if(!trust.alias || trust.alias == "") {
-                    trust.alias = trust.address;
+
+                if(Object.keys(trust.scope).length == 0 ) {
+                    trust.scope = {
+                        "value" : $scope.subject.scope
+                    }
                 }
-                
+
+                // if(!trust.alias || trust.alias == "") {
+                //     trust.alias = trust.address;
+                // }
+
             }
         }
 
@@ -140,6 +152,7 @@ app.controller("trustlistCtrl", function($scope) {
         profile.alias = trust.alias;
         profile.screen_name = trust.alias;
         profile.queryResult = $scope.subject.queryResult;
+        profile.scope = $scope.subject.scope;
 
         $scope.load(profile);
     }
@@ -195,6 +208,7 @@ app.controller("trustlistCtrl", function($scope) {
     }
 
     $scope.buildAndSubmitBinaryTrust = function(profile, value, expire, message) {
+        
         var package = $scope.subjectService.BuildBinaryTrust(profile, value, null, expire);
         $scope.packageBuilder.SignPackage(package);
         $scope.trustchainService.PostTrust(package).done(function(trustResult){
