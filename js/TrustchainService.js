@@ -78,8 +78,8 @@ var TrustchainService = (function() {
         return this.PostData('/api/trust/build', JSON.stringify(trust));
     }
 
-    TrustchainService.prototype.PostTrustTemplate = function(package) {
-        return this.PostData('/api/package/build', JSON.stringify(package));
+    TrustchainService.prototype.PostTrustTemplate = function(package_) {
+        return this.PostData('/api/package/build', JSON.stringify(package_));
     }
 
     TrustchainService.prototype.PostTrust = function(trust) {
