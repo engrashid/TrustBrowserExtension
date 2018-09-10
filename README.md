@@ -6,4 +6,5 @@ A client interface for issuing Trust
 npm install
 
 **  To build project run 
+
 npm run build
