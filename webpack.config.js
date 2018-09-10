@@ -46,17 +46,17 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({  // Also generate a test.html
-      filename: '../trustlist.html',
+      filename: './trustlist.html',
       template: './trustlist.html',
       chunks: ['main'],
-      // minify: {
-      //   removeComments: true,
-      //   collapseWhitespace: true,
-      //   conservativeCollapse: true
-      // }
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        conservativeCollapse: true
+      }
     }),
     new HtmlWebpackPlugin({  // Also generate a test.html
-      filename: '../extensionpopup.html',
+      filename: './extensionpopup.html',
       template: './extensionpopup.html',
       chunks: ['extpopup'],
       // minify   : {
@@ -74,6 +74,16 @@ module.exports = {
       //   removeStyleLinkTypeAttributese : true,
       //   useShortDoctype                : true
       // }
+    }),
+    new HtmlWebpackPlugin({  // Also generate a test.html
+      filename: './redditmodal.html',
+      template: './redditmodal.html',
+      chunks: [''], // no chunk pushed to html
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        conservativeCollapse: true
+      }
     })
   ]
 };

@@ -7,5 +7,5 @@ shell.cp("-R", "lib", "dist/");
 shell.cp("-R", "js", "dist/");
 shell.cp("-R", "typings", "dist/");
 shell.cp("*.json", "dist/");
-shell.cp("*.html", "dist/");
+//shell.cp("*.html", "dist/");
 shell.cp("README.md", "dist/");
