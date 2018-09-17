@@ -6,5 +6,9 @@
     },
     "include": [
         "./js/**/*"
-    ]
+    ],
+    "filesGlob": [
+        "./typings/**/*.ts",
+        "./js/*.ts"
+      ]
 }

@@ -7,13 +7,15 @@
         ]
     },
     "scripts": {
-        "build": "rm -rf dist && ./node_modules/.bin/webpack --config webpack.config.js --watch && ./node_modules/.bin/ts-node copyStaticAssets.ts"
+        "build": "rm -rf dist && ./node_modules/.bin/webpack --config webpack.config.js --display-error-details && ./node_modules/.bin/ts-node copyStaticAssets.ts"
     },
     "dependencies": {
+        "angular": "^1.7.4",
         "identicon.js": "^2.3.1"
     },
     "devDependencies": {
-        "@types/chrome": "0.0.72",
+        "@types/angular": "^1.6.50",
+        "@types/chrome": "0.0.73",
         "css-loader": "^1.0.0",
         "file-loader": "^2.0.0",
         "html-loader": "^0.5.5",

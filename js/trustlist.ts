@@ -1,6 +1,10 @@
-
+import * as angular from 'angular';
+ //import './node_modules/identicon.js/identicon.js'
+ declare var Identicon: any;
  import './common.js';
- import './SettingsController.js';
+ //import './SettingsController.js';
+ import SettingsController = require('./SettingsController');
+
  import './PackageBuilder.js';
  import './TrustchainService.js';
  import './TrustHandler.js';
@@ -154,7 +158,7 @@ app.controller("trustlistCtrl", function($scope) {
     $scope.analyseClick = function(trust) {
         $scope.history.push($scope.subject);
 
-        let profile = {};
+        let profile: any = {};
         profile.address = trust.issuer.address;
         profile.alias = trust.alias;
         profile.screen_name = trust.alias;
@@ -222,7 +226,7 @@ app.controller("trustlistCtrl", function($scope) {
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
-            $.notify(message, 'success');
+            $["notify"](message, 'success');
 
             var opt = {
                 command: 'updateContent',
@@ -231,7 +235,7 @@ app.controller("trustlistCtrl", function($scope) {
             chrome.runtime.sendMessage(opt);
 
         }).fail(function(trustResult){ 
-            $.notify("Adding trust failed: " +trustResult.message,"fail");
+            $["notify"]("Adding trust failed: " +trustResult.message,"fail");
         });
     }
 

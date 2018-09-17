@@ -1,9 +1,9 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-  entry: {main: './js/trustlist.js', extpopup: './js/extensionpopup.js'},
+  entry: {main: './js/trustlist.ts', extpopup: './js/extensionpopup.js'},
   mode: 'development',
-  devtool: 'eval',
+  devtool: 'cheap-module-source-map',
   module: {
     rules: [
       {
