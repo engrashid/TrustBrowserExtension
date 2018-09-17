@@ -88,6 +88,7 @@
     }
 
     loadSettings = (cb): any => {
+        console.log('ts settings working')
         chrome.storage.local.get('usersettings', (result) => {
             var settings = (result.usersettings) ? result.usersettings : this.createSettings;
             this.buildKey(settings);

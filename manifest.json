@@ -55,9 +55,13 @@
         "lib/identiconjs/identicon.js",
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
-        "./extpopup.bundle.js",
-        "js/ProfileRepository.js",
-        "js/Twitter.js"
+        "js/common.js",
+        "js/SettingsController.js",
+        "js/TrustchainService.js",
+        "js/PackageBuilder.js",
+        "js/TrustHandler.js",
+        "js/SubjectService.js",
+        "./twitterpr.bundle.js"
       ],
       "run_at": "document_end"
     }
