@@ -1,9 +1,13 @@
+declare var Identicon: any;
+declare var tce: any;
 import './ProfileRepository';
 //import './SettingsController';
+import SettingsController = require('./SettingsController');
+
 
 (function (DTP) {
 
-    DTP.ProfileController = (function () {
+    DTP['ProfileController'] = (function () {
         function ProfileController(profile, view, host) { 
             this.profile = profile;
             this.view = view;
@@ -26,12 +30,12 @@ import './ProfileRepository';
                 self.host.twitterService.getProfileDTP(self.profile.screen_name).then((owner) => {
                     if(owner != null) {
                         try {
-                            if(DTP.ProfileController.verifyDTPsignature(owner, self.profile.screen_name)) {
+                            if(DTP['ProfileController'].verifyDTPsignature(owner, self.profile.screen_name)) {
                                 self.profile.owner = owner;
                                 self.save();
                             }
                         } catch(error) {
-                            DTP.trace(error);
+                            DTP['trace'](error);
                         }
                     }
                     deferred.resolve(self.profile);
@@ -66,18 +70,19 @@ import './ProfileRepository';
         }
        
         ProfileController.prototype.trust = function() {
-            DTP.trace("Trust "+ this.profile.screen_name);
+            console.log('Trust clicked');
+            DTP['trace']("Trust "+ this.profile.screen_name);
             return this.trustProfile(true, 0);
         }
 
         ProfileController.prototype.distrust = function() {
-            DTP.trace("Distrust "+ this.profile.screen_name);
+            DTP['trace']("Distrust "+ this.profile.screen_name);
 
             return this.trustProfile(false, 0);
         }
 
         ProfileController.prototype.untrust = function() {
-            DTP.trace("Untrust "+ this.profile.screen_name);
+            DTP['trace']("Untrust "+ this.profile.screen_name);
             return this.trustProfile(undefined, 1);
         }
 
@@ -85,7 +90,7 @@ import './ProfileRepository';
             const self = this;
             return this.buildAndSubmitBinaryTrust(self.profile, value, expire).then(function(result) {
                 //self.controller.render();
-                DTP.trace('TrustProfile done!');
+                DTP['trace']('TrustProfile done!');
             });
         }
 
@@ -136,9 +141,9 @@ import './ProfileRepository';
             const self = this;
             let trustPackage = this.host.subjectService.BuildBinaryTrust(profile, value, null, expire);
             this.host.packageBuilder.SignPackage(trustPackage);
-            DTP.trace("Updating trust");
+            DTP['trace']("Updating trust");
             return this.host.trustchainService.PostTrust(trustPackage).then(function(trustResult){
-                DTP.trace("Posting package is a "+trustResult.status.toLowerCase()+ ' '+ trustResult.message);
+                DTP['trace']("Posting package is a "+trustResult.status.toLowerCase()+ ' '+ trustResult.message);
     
                 // Requery everything, as we have changed a trust
                 self.host.queryDTP(self.host.sessionProfiles);
@@ -148,16 +153,16 @@ import './ProfileRepository';
                 // }
     
             }).fail(function(trustResult){ 
-                DTP.trace("Adding trust failed: " +trustResult.message,"fail");
+                DTP['trace']("Adding trust failed: " +trustResult.message,"fail");
             });
         }
 
 
         // profile will usually be a deserialized neutral object
-        ProfileController.addTo = function(profile, twitterService, domElement) {
+        ProfileController['addTo'] = function(profile, twitterService, domElement) {
             if (!profile.controller) {
-                let view = new DTP.ProfileView();
-                let controller = new DTP.ProfileController(profile, view, twitterService);
+                let view = new DTP['ProfileView']();
+                let controller = new DTP['ProfileController'](profile, view, twitterService);
                 // Make sure that this property will no be serialized by using Object.defineProperty
                 Object.defineProperty(profile, 'controller', { value: controller });
             }
@@ -165,16 +170,16 @@ import './ProfileRepository';
             $(domElement).data("dtp_profile", profile);
         }
 
-        ProfileController.bindEvents = function(element, profileRepository) {
+        ProfileController['bindEvents'] = function(element, profileRepository) {
             $(element).on('click', '.trustIcon', function (event) {
                 let button = this;
                 $(button).addClass('trustSpinner24');
-                let tweetContainer = ProfileController.getTweetContainer(button);
+                let tweetContainer = ProfileController['getTweetContainer'](button);
                 let screen_name = $(tweetContainer).attr("data-screen-name");
                 let profile = profileRepository.ensureProfile(screen_name);
                 profile.controller.selectedElement = tweetContainer;
 
-                ProfileController.loadProfile(screen_name, profileRepository).then(function(profile) {
+                ProfileController['loadProfile'](screen_name, profileRepository).then(function(profile) {
                     if(button.classList.contains('trust')) {
                         profile.controller.trust().then(RemoveSpinner);
                     }
@@ -195,15 +200,15 @@ import './ProfileRepository';
 
         }
 
-        ProfileController.getTweetContainer = function(element)  {
+        ProfileController['getTweetContainer'] = function(element)  {
             return $(element).closest('div.tweet'); //.attr("data-screen-name");
         }
 
-        ProfileController.verifyDTPsignature = function(dtp, message) {
+        ProfileController['verifyDTPsignature'] = function(dtp, message) {
             return tce.bitcoin.message.verify(dtp.address, dtp.signature, message);
         }
 
-        ProfileController.loadProfile = function(screen_name, profileRepository) {
+        ProfileController['loadProfile'] = function(screen_name, profileRepository) {
             let profile = profileRepository.getProfile(screen_name);
             return profile.controller.update();
         }
@@ -211,7 +216,7 @@ import './ProfileRepository';
         return ProfileController;
     }());
 
-    DTP.ProfileView = (function () {
+    DTP['ProfileView'] = (function () {
         function ProfileView(controller) {
             this.controller = controller;
             //this.checkIconUrl = chrome.extension.getURL("img/check13.gif");
@@ -236,7 +241,7 @@ import './ProfileRepository';
                 }
 
                 bar.$fullNameGroup = $element.find(this.fullNameGroup);
-                bar.$fullNameGroup.prepend(ProfileView.createIdenticon(this.controller.profile));
+                bar.$fullNameGroup.prepend(ProfileView['createIdenticon'](this.controller.profile));
                
                 $anchor.after(bar.untrust.$html);
                 $anchor.after(bar.distrust.$html);
@@ -284,7 +289,7 @@ import './ProfileRepository';
             }
         } 
 
-        ProfileView.createTweetDTPButton = function() {
+        ProfileView['createTweetDTPButton'] = function() {
             let $editButton = $('.ProfileNav-list .edit-button');
             if($editButton.length == 0)
                 return;
@@ -302,15 +307,15 @@ import './ProfileRepository';
             $editButton.before($tweetDTP);
         }
         
-        ProfileView.showMessage = function(message) {
-            var pop = $('#message-drawer');
+        ProfileView['showMessage'] = function(message) {
+            const pop = $('#message-drawer');
             pop.find('.message-text').text(message);
-            pop.attr("style", "").removeClass('hidden').delay(3000).fadeOut(function() {
+            pop.attr("style", "").removeClass('hidden').delay(3000).fadeOut(1000, () => {
                 pop.addClass('hidden').attr("style", "top: -40px;");
             });
         }
 
-        ProfileView.createIdenticon = function(profile) {
+        ProfileView['createIdenticon'] = function(profile) {
             let iconData = null;
 
             // if (profile.owner) {
@@ -340,13 +345,13 @@ import './ProfileRepository';
                      url: 'trustlist.html',
                      data: $(this).data('dtp_profile')
                  };
-                 opt.w = 800;
-                 opt.h = 800;
+                 opt['w'] = 800;
+                 opt['h'] = 800;
                  var wLeft = window.screenLeft ? window.screenLeft : window.screenX;
                  var wTop = window.screenTop ? window.screenTop : window.screenY;
         
-                 opt.left = Math.floor(wLeft + (window.innerWidth / 2) - (opt.w / 2));
-                 opt.top = Math.floor(wTop + (window.innerHeight / 2) - (opt.h / 2));
+                 opt['left'] = Math.floor(wLeft + (window.innerWidth / 2) - (opt['w'] / 2));
+                 opt['top'] = Math.floor(wTop + (window.innerHeight / 2) - (opt['h'] / 2));
                 
                  chrome.runtime.sendMessage(opt);
                  return false;
@@ -381,7 +386,7 @@ import './ProfileRepository';
     }());
 
 
-    DTP.Profile = (function () {
+    DTP['Profile'] = (function () {
         function Profile(screen_name) { 
             this.screen_name = screen_name;
             this.alias = screen_name;
@@ -389,30 +394,30 @@ import './ProfileRepository';
             this.scope = window.location.hostname;
         }
 
-        Profile.LoadCurrent = function(settings, profileRepository) {
-            Profile.Current = JSON.parse($("#init-data")[0].value);
+        Profile['LoadCurrent'] = function(settings, profileRepository) {
+            Profile['Current'] = JSON.parse($("#init-data")[0]['value']);
 
             if(settings.address) {
-                Profile.Current.owner = {
+                Profile['Current'].owner = {
                     scope: '',
                     address: settings.address,
-                    signature: tce.bitcoin.message.sign(settings.keyPair, Profile.Current.screenName),
+                    signature: tce.bitcoin.message.sign(settings.keyPair, Profile['Current'].screenName),
                     valid : true
                 };
             }
 
-            let profile = profileRepository.ensureProfile(Profile.Current.screenName);
-            profile.owner = Profile.Current.owner;
+            let profile = profileRepository.ensureProfile(Profile['Current'].screenName);
+            profile.owner = Profile['Current'].owner;
             profileRepository.setProfile(profile);
         }
 
 
-        Profile.Current = null;
+        Profile['Current'] = null;
 
         return Profile;
     }());
 
-    DTP.TwitterService = (function ($) {
+    DTP['TwitterService'] = (function ($) {
         function TwitterService(settings) {
             this.settings = settings;
         }
@@ -443,7 +448,7 @@ import './ProfileRepository';
             this.getData(url, 'html').then((html) => {
 
                 let $body = $(html);
-                let tweets = $body.find()
+                let tweets = $body.find(null)
                 let result = this.extractDTP(html);
 
                 deferred.resolve(result);
@@ -466,8 +471,8 @@ import './ProfileRepository';
             }
 
             let result = {
-                address: text.findSubstring('Address:', ' ', true, true),
-                signature: text.findSubstring('Signature:', ' ', true, true),
+                address: text['findSubstring']('Address:', ' ', true, true),
+                signature: text['findSubstring']('Signature:', ' ', true, true),
                 scope: '', // global
             }
 
@@ -477,7 +482,7 @@ import './ProfileRepository';
         TwitterService.prototype.getData = function (path, dataType) {
             let deferred = $.Deferred();
             let self = this;
-            let url = TwitterService.BaseUrl+path;
+            let url = TwitterService['BaseUrl']+path;
             dataType = dataType || "json";
 
             $.ajax({
@@ -507,9 +512,9 @@ import './ProfileRepository';
             let self = this;
             var deferred = $.Deferred();
 
-            let url = TwitterService.BaseUrl + path;
+            let url = TwitterService['BaseUrl'] + path;
             //let postData = 'authenticity_token=' + DTP.Profile.Current.formAuthenticityToken + '&' + data;
-            data.authenticity_token = DTP.Profile.Current.formAuthenticityToken;
+            data.authenticity_token = DTP['Profile'].Current.formAuthenticityToken;
 
             $.ajax({
                 type: "POST",
@@ -534,24 +539,24 @@ import './ProfileRepository';
         TwitterService.prototype.errorHandler = function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 404 || errorThrown == 'Not Found') {
                 var msg = 'Error 404: Server was not found.';
-                DTP.trace(msg);
+                DTP['trace'](msg);
             }
             else {
                 var msg = textStatus + " : " + errorThrown;
                 if (jqXHR.responseJSON)
                     msg = JSON.stringify(jqXHR.responseJSON.ExceptionMessage, null, 2);
 
-                DTP.trace(msg);
+                DTP['trace'](msg);
             }
         }
 
-        TwitterService.BaseUrl = 'https://twitter.com';
+        TwitterService['BaseUrl'] = 'https://twitter.com';
 
         return TwitterService;
     }(jQuery));
     
 
-    DTP.Twitter = (function ($) {
+    DTP['Twitter'] = (function ($) {
         function Twitter(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository) {
             var self = this;
             self.OwnerPrefix = "[#owner_]";
@@ -573,7 +578,7 @@ import './ProfileRepository';
                 let screen_name = element.attributes["data-screen-name"].value;
                 let profile = self.profileRepository.ensureProfile(screen_name, self.profileView);
 
-                DTP.ProfileController.addTo(profile, self, element);
+                DTP['ProfileController'].addTo(profile, self, element);
                 
                 self.sessionProfiles[profile.screen_name] = profile; // All the profiles in the current page session
                 if(profile.controller.time == 0) { 
@@ -597,7 +602,7 @@ import './ProfileRepository';
 
             return this.trustchainService.Query(profiles, window.location.hostname).then(function(result) {
                 if (result && result.status == "Success") {
-                    DTP.trace(JSON.stringify(result, null, 2));
+                    DTP['trace'](JSON.stringify(result, null, 2));
                     let th = new TrustHandler(result.data.results, self.settings);
                     th.BuildSubjects();
                     
@@ -617,7 +622,7 @@ import './ProfileRepository';
                 }
                 else {
                     if(result)
-                        DTP.trace(result.message);
+                        DTP['trace'](result.message);
                 }
             });
         }
@@ -625,8 +630,8 @@ import './ProfileRepository';
         Twitter.prototype.tweetDTP = function() {
             const self = this;
 
-            let status = 'Digital Trust Protocol #DTP \rAddress:' + DTP.Profile.Current.owner.address
-                         + ' \rSignature:' + DTP.Profile.Current.owner.signature.toBase64();
+            let status = 'Digital Trust Protocol #DTP \rAddress:' + DTP['Profile'].Current.owner.address
+                         + ' \rSignature:' + DTP['Profile'].Current.owner.signature.toBase64();
             let data = {
                 batch_mode:'off',
                 is_permalink_page:false,
@@ -635,9 +640,9 @@ import './ProfileRepository';
             };
 
             self.twitterService.sendTweet(data).then(function(result) {
-                DTP.Profile.Current.DTP = DTP.Profile.Current.DTP || {};
-                DTP.Profile.Current.DTP.tweet_id = result.tweet_id;
-                DTP.ProfileView.showMessage("DTP tweet created");
+                DTP['Profile'].Current.DTP = DTP['Profile'].Current.DTP || {};
+                DTP['Profile'].Current.DTP.tweet_id = result.tweet_id;
+                DTP['Profile'].showMessage("DTP tweet created");
             });
         }
 
@@ -646,7 +651,7 @@ import './ProfileRepository';
 
             $(element).ready(function () {
 
-                DTP.Profile.LoadCurrent(self.settings, self.profileRepository);
+                DTP['Profile'].LoadCurrent(self.settings, self.profileRepository);
 
                 var tweets = self.getTweets();
 
@@ -655,8 +660,8 @@ import './ProfileRepository';
                 });
 
                                 
-                DTP.ProfileController.bindEvents(element, self.profileRepository);
-                DTP.ProfileView.createTweetDTPButton();
+                DTP['ProfileController'].bindEvents(element, self.profileRepository);
+                DTP['ProfileView'].createTweetDTPButton();
 
             });
 
@@ -680,8 +685,8 @@ import './ProfileRepository';
                 if(!self.waiting) {
                     self.waiting = true;
                     setTimeout(function() {
-                        DTP.trace("DOMNodeInserted done!");
-                        DTP.ProfileView.createTweetDTPButton();
+                        DTP['trace']("DOMNodeInserted done!");
+                        DTP['ProfileView'].createTweetDTPButton();
 
                         self.queryDTP(self.profilesToQuery);
                         self.profilesToQuery = {};
@@ -702,7 +707,7 @@ import './ProfileRepository';
         return Twitter;
     }(jQuery));
 
-})(DTP || (DTP = {}));
+})(DTP || (DTP = {} as DTP));
 
 
 var settingsController = new SettingsController();

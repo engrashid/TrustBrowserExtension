@@ -1,12 +1,13 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 
 var TrustHandler = (function() {
-    function TrustHandler(package, settings) {
-        if(!package) 
-            package = { trusts: [] };
+    function TrustHandler(tpackage, settings) {
+        console.log('trust', tpackage)
+        if(!tpackage) 
+            tpackage = { trusts: [] };
 
         this.settings = settings;
-        this.package = package;
+        this.package = tpackage;
         this.subjects = [];
         this.alias = [];
     }

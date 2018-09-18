@@ -1,3 +1,6 @@
+
+ import './common.js';
+ import * as SettingsController from './SettingsController';
 var controller = new SettingsController();
 var settings = null;
 // Onload

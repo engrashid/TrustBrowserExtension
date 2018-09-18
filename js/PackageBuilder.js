@@ -8,15 +8,15 @@ var PackageBuilder = (function() {
 
 
     PackageBuilder.prototype.CreatePackage = function(trust) {
-        var package = {
+        var package_ = {
             trusts: (trust) ? [trust] : []
         }
-        return package;
+        return package_;
     }
 
-    PackageBuilder.prototype.SignPackage = function(package) {
-        for(var trustIndex in package.trusts) {
-            var trust = package.trusts[trustIndex];
+    PackageBuilder.prototype.SignPackage = function(package_) {
+        for(var trustIndex in package_.trusts) {
+            var trust = package_.trusts[trustIndex];
             this.CalculateTrustId(trust);
             this.SignTrust(trust);
         }
