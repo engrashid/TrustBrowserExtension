@@ -7,8 +7,7 @@
         ]
     },
     "scripts": {
-        "build": "rm -rf dist && ./node_modules/.bin/webpack --config webpack.config.js --display-error-details && ./node_modules/.bin/ts-node copyStaticAssets.ts",
-        "winbuild": "rimraf dist && ./node_modules/.bin/webpack --config webpack.config.js --display-error-details && ./node_modules/.bin/ts-node copyStaticAssets.ts"
+        "build": "rimraf dist && ./node_modules/.bin/webpack --config webpack.config.js --display-error-details && ./node_modules/.bin/ts-node copyStaticAssets.ts"
     },
     "dependencies": {
         "angular": "^1.7.4",

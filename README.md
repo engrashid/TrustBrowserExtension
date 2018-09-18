@@ -5,9 +5,6 @@ A client interface for issuing Trust
 
 npm install
 
-**  To build on project Linux/OSX  run
+**  To build  project run
 
 npm run build
-**  To build on project windows  run
-
-npm run winbuild
