@@ -2,6 +2,8 @@
  class SettingsController {
     settings: any
     constructor(){
+
+        // initialize settings with default value
          this.settings = {
             "password": '',
             "seed": '',
@@ -14,21 +16,6 @@
             //"keypair": null
         }
     }
-    // createSettings() {
-    //     const settings = {
-    //         "password": '',
-    //         "seed": '',
-    //         "rememberme": true,
-    //         "infoserver": "https://trust.dance",
-    //         // "buildserver": "https://trust.dance:12701",
-    //         // "graphserver": "https://trust.dance:12702",
-    //         'trustrender': 'icon',
-    //         "resultrender": 'warning'
-    //         //"keypair": null
-    //     }
-    //     return settings;
-    // }
-
     saveSettings (settings){
         if (settings.rememberme) {
             settings.keyPair = undefined;
@@ -41,7 +28,6 @@
     }
 
     loadSettings (cb) {
-        console.log('ts settings working')
         chrome.storage.local.get('usersettings', (result) => {
             console.log('storage',result.usersettings );
             console.log('crmethod',this.settings );
