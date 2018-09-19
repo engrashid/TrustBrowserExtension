@@ -2,6 +2,7 @@
 
 var TrustchainService = (function() {
     function TrustchainService(settings) {
+        console.log('chain seting',this.settings)
         this.settings = settings;
     } 
 
@@ -89,7 +90,7 @@ var TrustchainService = (function() {
     TrustchainService.prototype.GetData = function(query) {
         var deferred = $.Deferred();
         var self = this;
-        var url = this.settings.infoserver + query;
+        var url = self.settings.infoserver + query;
 
         $.ajax({
             type: "GET",
@@ -110,7 +111,8 @@ var TrustchainService = (function() {
     TrustchainService.prototype.PostData = function(query, data) {
         var deferred = $.Deferred();
         var self = this;
-        var url = this.settings.infoserver + query;
+        console.log('infoserver',self.settings.infoserver)
+        var url = self.settings.infoserver + query;
 
         $.ajax({
             type: "POST",
@@ -146,3 +148,4 @@ var TrustchainService = (function() {
 
     return TrustchainService;
 }())
+module.exports = {TrustchainService}

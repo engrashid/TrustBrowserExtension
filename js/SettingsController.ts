@@ -1,13 +1,8 @@
  declare var tce: any;
  class SettingsController {
-
+    settings: any
     constructor(){
-        //this.loadSettings = this.loadSettings.bind(this);
-        //this.createSettings();
-       // const self = this;
-    }
-    createSettings = (): any => {
-        const settings = {
+         this.settings = {
             "password": '',
             "seed": '',
             "rememberme": true,
@@ -18,13 +13,26 @@
             "resultrender": 'warning'
             //"keypair": null
         }
-        return settings;
     }
+    // createSettings() {
+    //     const settings = {
+    //         "password": '',
+    //         "seed": '',
+    //         "rememberme": true,
+    //         "infoserver": "https://trust.dance",
+    //         // "buildserver": "https://trust.dance:12701",
+    //         // "graphserver": "https://trust.dance:12702",
+    //         'trustrender': 'icon',
+    //         "resultrender": 'warning'
+    //         //"keypair": null
+    //     }
+    //     return settings;
+    // }
 
-    saveSettings = (settings): any => {
+    saveSettings (settings){
         if (settings.rememberme) {
             settings.keyPair = undefined;
-            chrome.storage.local.set({ usersettings: settings }, function () {
+            chrome.storage.local.set({ usersettings: settings }, () => {
                 this.buildKey(settings);
                 console.log('Settings saved');
 
@@ -32,16 +40,18 @@
         }
     }
 
-    loadSettings = (cb): any => {
+    loadSettings (cb) {
         console.log('ts settings working')
         chrome.storage.local.get('usersettings', (result) => {
-            let settings = (result.usersettings) ? result.usersettings : this.createSettings;
+            console.log('storage',result.usersettings );
+            console.log('crmethod',this.settings );
+            let settings = (result.usersettings) ? result.usersettings : this.settings;
             this.buildKey(settings);
             cb(settings);
         });
     }
 
-   public buildKey = (settings): any => {
+   public buildKey(settings) {
         let keystring = settings.password + settings.seed;
         let hash = tce.bitcoin.crypto.hash256(keystring);
         let d = tce.BigInteger.fromBuffer(hash)

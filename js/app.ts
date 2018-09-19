@@ -6,17 +6,19 @@ import * as angular from 'angular';
  import SettingsController = require('./SettingsController');
 
  import './PackageBuilder.js';
- import './TrustchainService.js';
+ //import './TrustchainService.js';
+ import TrustchainService = require('./TrustchainService');
+
  import './TrustHandler.js';
  import './SubjectService.js';
-var app = angular.module("myApp", []);
-app.controller("trustlistCtrl", function($scope) {
+const app = angular.module("myApp", []);
+app.controller("trustlistCtrl", ($scope) => {
 
-    $scope.init = function() {    
+    $scope.init = () => {    
         $scope.showContainer = false; // Less flickring
         $scope.history = [];
 
-        console.log("Loading Settings");
+        console.log("Loading Settings from TS");
         $scope.settingsController = new SettingsController();
         $scope.settingsController.loadSettings(function (settings) {
             $scope.settings = settings;
@@ -29,7 +31,7 @@ app.controller("trustlistCtrl", function($scope) {
         });
     }
 
-    $scope.requestProfile = function(profile_name) {
+    $scope.requestProfile = (profile_name) => {
         console.log("RequestData send to background page");
         chrome.runtime.sendMessage({ command: 'requestData', profile_name: null }, function(response) {
             console.log("RequestData response from background page");
@@ -41,10 +43,10 @@ app.controller("trustlistCtrl", function($scope) {
         });
     }
 
-    $scope.addListeners = function() {
+    $scope.addListeners = () => {
         console.log("Adding Listener for calls from the background page.");
         chrome.runtime.onMessage.addListener(
-            function(request, sender, sendResponse) {
+            (request, sender, sendResponse) => {
                 console.log("Listener request from background page");
                 console.log(request);
 
@@ -59,14 +61,14 @@ app.controller("trustlistCtrl", function($scope) {
             });
     }
 
-    $scope.loadOnData = function(profile) {
+    $scope.loadOnData = (profile) => {
         $scope.trustHandler = new TrustHandler(profile.queryResult, $scope.settings);
         $scope.trustHandler.BuildSubjects();
 
         $scope.load(profile);
     }
 
-    $scope.reset = function() {
+    $scope.reset = () => {
         $scope.subject = null;
         $scope.binarytrusts = [];
         $scope.trusted = [];
@@ -74,7 +76,7 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.jsonVisible = false;
     }
 
-    $scope.load = function(subject) {
+    $scope.load = (subject) => {
         $scope.reset();
         $scope.subject = subject;
         $scope.defaultScope = $scope.subject.scope;
@@ -94,8 +96,8 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.subject.trusts = $scope.trustHandler.subjects[$scope.subject.address];
         $scope.subject.binaryTrust = $scope.trustHandler.CalculateBinaryTrust($scope.subject.address);
 
-        for(var index in $scope.subject.trusts) {
-            var t = $scope.subject.trusts[index];
+        for(let index in $scope.subject.trusts) {
+            let t = $scope.subject.trusts[index];
 
 
             let trust = $scope.packageBuilder.CreateTrust(t.issuer.address, t.issuer.script, t.subject.address, t.type, t.scope, t.claim, t.activate, t.expire, t.note);
@@ -125,9 +127,9 @@ app.controller("trustlistCtrl", function($scope) {
                 Object.defineProperty(trust, 'showDistrustButton', { value: !($scope.subject.binaryTrust.direct && !$scope.subject.binaryTrust.directValue), writable: false });
                 Object.defineProperty(trust, 'showUntrustButton', { value: $scope.subject.binaryTrust.direct, writable: false });
                 
-                var alias = $scope.trustHandler.alias[trust.issuer.address];
+                let alias = $scope.trustHandler.alias[trust.issuer.address];
                 if(alias && alias.length > 0) {
-                    var item = alias[0];
+                    let item = alias[0];
                     let screen_name = item.claimObj.alias;
                     trust.address = screen_name.hash160().toDTPAddress();
                     trust.alias = screen_name + (trust.showUntrustButton ? " (You)": "");
@@ -155,7 +157,7 @@ app.controller("trustlistCtrl", function($scope) {
         $scope.$apply();
     }
 
-    $scope.analyseClick = function(trust) {
+    $scope.analyseClick = (trust) => {
         $scope.history.push($scope.subject);
 
         let profile: any = {};
@@ -169,31 +171,31 @@ app.controller("trustlistCtrl", function($scope) {
     }
 
 
-    $scope.historyBack = function() {
+    $scope.historyBack = () => {
         $scope.load($scope.history.pop());
     }
 
-    $scope.showHideJson = function() {
+    $scope.showHideJson = () => {
         $scope.jsonVisible = ($scope.jsonVisible) ? false: true;
     }
 
 
-    $scope.getIdenticoinData = function(address, size) {
+    $scope.getIdenticoinData = (address, size) => {
         if(!size) size = 64;
         return new Identicon(address, {margin:0.1, size:size, format: 'svg'}).toString();
     };
 
-    $scope.trustDataClick = function(trust) {
+    $scope.trustDataClick = (trust) => {
         $scope.trustchainService.GetSimilarTrust(trust).done(function(result){
             $scope.trustData =  JSON.stringify(result.data, undefined, 2);
             $scope.jsonVisible = true;
         });
     }
 
-    $scope.verifyTrustLink = function(trust) {
+    $scope.verifyTrustLink = (trust) => {
 
 
-        var url = $scope.settings.infoserver+
+        let url = $scope.settings.infoserver+
             "/trusts?issuerAddress="+encodeURIComponent(trust.issuer.address)+
             "&subjectAddress="+encodeURIComponent(trust.subject.address)+
             "&type="+encodeURIComponent(trust.type)+
@@ -203,26 +205,26 @@ app.controller("trustlistCtrl", function($scope) {
     }
 
 
-    $scope.trustClick = function(profile) {
+    $scope.trustClick = (profile) => {
         $scope.buildAndSubmitBinaryTrust(profile, true, 0, profile.alias + " trusted");
         return false;
     };
 
-    $scope.distrustClick = function(profile) {
+    $scope.distrustClick = (profile) => {
         $scope.buildAndSubmitBinaryTrust(profile, false, 0, profile.alias + " distrusted");
         return false;
     }
 
-    $scope.untrustClick = function(profile) {
+    $scope.untrustClick = (profile) => {
         $scope.buildAndSubmitBinaryTrust(profile, undefined, 1, profile.alias + " untrusted");
         return false;
     }
 
-    $scope.buildAndSubmitBinaryTrust = function(profile, value, expire, message) {
+    $scope.buildAndSubmitBinaryTrust = (profile, value, expire, message) => {
         
         var package_ = $scope.subjectService.BuildBinaryTrust(profile, value, null, expire);
         $scope.packageBuilder.SignPackage(package_);
-        $scope.trustchainService.PostTrust(package_).done(function(trustResult){
+        $scope.trustchainService.PostTrust(package_).done((trustResult)=> {
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
@@ -234,7 +236,7 @@ app.controller("trustlistCtrl", function($scope) {
             }
             chrome.runtime.sendMessage(opt);
 
-        }).fail(function(trustResult){ 
+        }).fail((trustResult) => { 
             $["notify"]("Adding trust failed: " +trustResult.message,"fail");
         });
     }

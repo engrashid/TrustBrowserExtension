@@ -1,18 +1,32 @@
  /// TS_IGNORE
- ((DTP) => {
+  ((DTP) => {
     DTP['ProfileRepository'] = (() => {
-        function ProfileRepository(settings, storage) { 
-            // No serializable
-            Object.defineProperty(this, 'settings', { value: settings, writable: true });
-            Object.defineProperty(this, 'storage', { value: storage, writable: false });
-            Object.defineProperty(this, 'profiles', { value: {}, writable: false });
-        }
+        class ProfileRepository {
+            settings: any
+            profiles: any
+            storage: any
+            constructor(settings, storage){
+                this.settings = settings;
+                this.profiles = {}
+                this.storage = storage
+                // No serializable
+                // Object.defineProperty(this, 'settings', { value: settings, writable: true });
+                // Object.defineProperty(this, 'storage', { value: storage, writable: false });
+                // Object.defineProperty(this, 'profiles', { value: {}, writable: false });
+            }
+        
+        // function ProfileRepository(settings, storage) { 
+        //     // No serializable
+        //     Object.defineProperty(this, 'settings', { value: settings, writable: true });
+        //     Object.defineProperty(this, 'storage', { value: storage, writable: false });
+        //     Object.defineProperty(this, 'profiles', { value: {}, writable: false });
+        // }
 
-        ProfileRepository.prototype.getCacheKey = function(screen_name) {
+       getCacheKey (screen_name) {
             return 'Twitter'+this.settings.address+screen_name;
         }
 
-        ProfileRepository.prototype.getProfile = function(screen_name) {
+        getProfile(screen_name) {
             let profile = this.profiles[screen_name];
             if(profile)
                 return profile;
@@ -27,12 +41,12 @@
             return profile;
         }
 
-        ProfileRepository.prototype.setProfile = function(profile) {
+        setProfile (profile) {
             this.profiles[profile.screen_name] = profile;
             this.storage.setItem(this.getCacheKey(profile.screen_name), JSON.stringify(profile));
         }
 
-        ProfileRepository.prototype.ensureProfile = function(screen_name) {
+        ensureProfile (screen_name) {
             let profile = this.getProfile(screen_name);
             if(!profile) {
                 profile = new DTP['Profile'](screen_name);
@@ -42,10 +56,13 @@
             return profile;
         }
 
-        ProfileRepository.prototype.update = function(settings) {
+        update (settings) {
             this.settings = settings;
         }
-
-        return ProfileRepository;
+        
+        //return ProfileRepository;
+    }
     })();
+    
 })(DTP || (DTP = {} as DTP));
+export = DTP;

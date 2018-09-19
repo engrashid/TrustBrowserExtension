@@ -1,6 +1,7 @@
 declare var Identicon: any;
 declare var tce: any;
-import './ProfileRepository';
+//import DTP = require('./ProfileRepository');
+import TrustchainService = require('./TrustchainService');
 //import './SettingsController';
 import SettingsController = require('./SettingsController');
 
@@ -308,9 +309,9 @@ import SettingsController = require('./SettingsController');
         }
         
         ProfileView['showMessage'] = function(message) {
-            const pop = $('#message-drawer');
+            let pop = $('#message-drawer');
             pop.find('.message-text').text(message);
-            pop.attr("style", "").removeClass('hidden').delay(3000).fadeOut(1000, () => {
+            pop.attr("style", "").removeClass('hidden').delay(3000).fadeOut(1000, function() {
                 pop.addClass('hidden').attr("style", "top: -40px;");
             });
         }
@@ -642,7 +643,7 @@ import SettingsController = require('./SettingsController');
             self.twitterService.sendTweet(data).then(function(result) {
                 DTP['Profile'].Current.DTP = DTP['Profile'].Current.DTP || {};
                 DTP['Profile'].Current.DTP.tweet_id = result.tweet_id;
-                DTP['Profile'].showMessage("DTP tweet created");
+                DTP['ProfileView'].showMessage("DTP tweet created");
             });
         }
 
@@ -712,6 +713,7 @@ import SettingsController = require('./SettingsController');
 
 var settingsController = new SettingsController();
 settingsController.loadSettings(function (settings) {
+    console.log('settings loaded in twitter.ts', settings)
     var packageBuilder = new PackageBuilder(settings);
     var subjectService = new SubjectService(settings, packageBuilder);
     var trustchainService = new TrustchainService(settings);

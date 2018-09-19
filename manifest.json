@@ -1,5 +1,5 @@
 {
-  "name": "Trust Browser Extension",
+  "name": "Trust Browser Extension V2",
   "description": "Proof of concept of Digital Trust Protocol UI implementation - Currently only for Twitter and Reddit. This extension is in alpha and do not provide any security features, no effort has been done to protect your password!",
   "version": "0.2.180704",
   "manifest_version": 2,
@@ -56,7 +56,7 @@
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
         "js/common.js",
-        "js/TrustchainService.js",
+        "js/ProfileRepository.js",
         "js/PackageBuilder.js",
         "js/TrustHandler.js",
         "js/SubjectService.js",
