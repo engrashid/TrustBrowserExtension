@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-  entry: {main: './js/app.ts', extpopup: './js/extensionpopup.js', twitterpr: './js/Twitter.ts'},
+  entry: {main: './js/app.ts', extpopup: './js/extensionpopup.js', twitter: './js/Twitter.ts'},
   mode: 'development',
   devtool: 'cheap-module-source-map',
   module: {

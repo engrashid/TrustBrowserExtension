@@ -60,7 +60,7 @@
         "js/PackageBuilder.js",
         "js/TrustHandler.js",
         "js/SubjectService.js",
-        "./twitterpr.bundle.js"
+        "./twitter.bundle.js"
       ],
       "run_at": "document_end"
     }
