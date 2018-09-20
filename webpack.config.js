@@ -1,5 +1,8 @@
 const path = require('path');
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   entry: {main: './js/app.ts', extpopup: './js/extensionpopup.js', twitter: './js/Twitter.ts'},
   mode: 'development',
@@ -45,6 +48,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
+    new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({  // Also generate a test.html
       filename: './trustlist.html',
       template: './trustlist.html',
@@ -59,21 +63,20 @@ module.exports = {
       filename: './extensionpopup.html',
       template: './extensionpopup.html',
       chunks: ['extpopup'],
-      // minify   : {
-      //   html5                          : true,
-      //   collapseWhitespace             : true,
-      //   minifyCSS                      : true,
-      //   minifyJS                       : true,
-      //   minifyURLs                     : false,
-      //   removeAttributeQuotes          : true,
-      //   removeComments                 : true,
-      //   removeEmptyAttributes          : true,
-      //   removeOptionalTags             : true,
-      //   removeRedundantAttributes      : true,
-      //   removeScriptTypeAttributes     : true,
-      //   removeStyleLinkTypeAttributese : true,
-      //   useShortDoctype                : true
-      // }
+      minify   : {
+        html5                          : true,
+        collapseWhitespace             : true,
+        minifyCSS                      : true,
+        minifyJS                       : true,
+        minifyURLs                     : false,
+        removeAttributeQuotes          : true,
+        removeComments                 : true,
+        removeEmptyAttributes          : true,
+        removeOptionalTags             : true,
+        removeRedundantAttributes      : true,
+        removeScriptTypeAttributes     : true,
+        useShortDoctype                : true
+      }
     }),
     new HtmlWebpackPlugin({  // Also generate a test.html
       filename: './redditmodal.html',
@@ -84,6 +87,19 @@ module.exports = {
         collapseWhitespace: true,
         conservativeCollapse: true
       }
-    })
-  ]
+    }),
+    new CopyWebpackPlugin([
+      {from:'css',to:'./css'},
+      {from:'img',to:'./img'},
+      {from:'fonts',to:'./fonts'},
+      {from:'lib',to:'./lib'},
+      {from:'js',to:'./js'},
+      {from:'typings',to:'./typings'},
+      {from:'manifest.json',to:'./manifest.json'},
+      {from:'data.json',to:'./data.json'}  
+  ]),
+  ],
+  optimization: {
+    minimize: true
+  }
 };
