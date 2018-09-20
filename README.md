@@ -8,3 +8,7 @@ npm install
 **  To build  project run
 
 npm run build
+
+**  To run in development mode for watch and build
+
+npm run dev
