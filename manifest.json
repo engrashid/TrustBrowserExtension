@@ -57,9 +57,6 @@
         "lib/Notify/notify.min.js",
         "js/common.js",
         "js/ProfileRepository.js",
-        "js/PackageBuilder.js",
-        "js/TrustHandler.js",
-        "js/SubjectService.js",
         "./twitter.bundle.js"
       ],
       "run_at": "document_end"
