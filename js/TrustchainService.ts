@@ -70,7 +70,7 @@ class TrustchainService  {
 
 
     GetTrustTemplate (subject, alias) {
-        let url ='/api/trust/build?issuer='+settings.address+'&subject='+subject+'&alias='+alias;
+        let url ='/api/trust/build?issuer='+this.settings.address+'&subject='+subject+'&alias='+alias;
     
         return this.GetData(url);
     }

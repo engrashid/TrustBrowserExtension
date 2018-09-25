@@ -31,8 +31,8 @@ class SubjectService  {
 
         let $proof = $(comment).find("a[href*='scope=reddit']:contains('Proof')")
         if ($proof.length > 0) {
-            let params = getQueryParams($proof.attr("href"));
-            if(params.name == author) {
+            let params = this.getQueryParams($proof.attr("href"));
+            if(params['name'] == author) {
                 if(!subject.owner)
                     subject.owner = params;
                 
@@ -45,7 +45,29 @@ class SubjectService  {
         }
         return subject;
     }
-
+     getQueryParams(url) {
+        var qparams = {},
+            parts = (url || '').split('?'),
+            qparts, qpart,
+            i = 0;
+    
+        if (parts.length <= 1) {
+            return qparams;
+        } else {
+            qparts = parts[1].split('&');
+            for (let i in qparts) {
+    
+                qpart = qparts[i].split('=');
+                qparams[decodeURIComponent(qpart[0])] =
+                               decodeURIComponent(qpart[1] || '');
+            }
+        }
+    
+        return qparams;
+    };
+    isNullOrWhitespace(input) {
+        return !input || !input.trim();
+    }
 
     BuildBinaryTrust (profile, value, note, expire) {
         let trust = undefined;
@@ -75,7 +97,7 @@ class SubjectService  {
                 expire);
                 trustpackage.trusts.push(ownerTrust);
 
-            if(!isNullOrWhitespace(profile.alias)) { 
+            if(!this.isNullOrWhitespace(profile.alias)) { 
                 let aliastrust = this.packageBuilder.CreateAliasIdentityTrust(
                     this.settings.address,
                     this.SCRIPT, 

@@ -1,7 +1,6 @@
  /// TS_IGNORE
-  ((DTP) => {
-    DTP['ProfileRepository'] = (() => {
-        class ProfileRepository {
+ import Profile = require('./Profile'); //declare var DTP: any;
+ class ProfileRepository {
             settings: any
             profiles: any
             storage: any
@@ -31,7 +30,7 @@
             if(profile)
                 return profile;
 
-            var data = this.storage.getItem(this.getCacheKey(screen_name));
+            let data = this.storage.getItem(this.getCacheKey(screen_name));
             if(!data) {
                 return null;
             } 
@@ -49,7 +48,7 @@
         ensureProfile (screen_name) {
             let profile = this.getProfile(screen_name);
             if(!profile) {
-                profile = new DTP['Profile'](screen_name);
+                profile = new Profile(screen_name);
                 this.setProfile(profile);
                 DTP['trace']('Profile '+ profile.screen_name +' created');
             }
@@ -62,7 +61,4 @@
         
         //return ProfileRepository;
     }
-    })();
-    
-})(DTP || (DTP = {} as DTP));
-export = DTP;
+export = ProfileRepository

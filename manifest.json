@@ -56,7 +56,6 @@
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
         "js/common.js",
-        "js/ProfileRepository.js",
         "./twitter.bundle.js"
       ],
       "run_at": "document_end"
