@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
-  entry: {main: './js/app.ts', extpopup: './js/extensionpopup.js', twitter: './js/Twitter.ts'},
+  entry: {main: './js/app.ts', 'js/extpopup': './js/extensionpopup.js', 'js/twitter': './js/Twitter.ts'},
   mode: 'development',
   devtool: 'cheap-module-source-map',
   module: {
@@ -62,7 +62,7 @@ module.exports = {
     new HtmlWebpackPlugin({  // Also generate a test.html
       filename: './extensionpopup.html',
       template: './extensionpopup.html',
-      chunks: ['extpopup'],
+      chunks: ['js/extpopup'],
       minify   : {
         html5                          : true,
         collapseWhitespace             : true,

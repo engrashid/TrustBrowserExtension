@@ -38,7 +38,7 @@
         "lib/identiconjs/identicon.js",
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
-        "./main.bundle.js",
+        "main.bundle.js",
         "js/TagBar.js",
         "js/reddit.js"
       ],
@@ -56,7 +56,7 @@
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
         "js/common.js",
-        "./twitter.bundle.js"
+        "js/twitter.bundle.js"
       ],
       "run_at": "document_end"
     }

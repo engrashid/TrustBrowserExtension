@@ -188,15 +188,15 @@ class  Twitter {
 }
 
 
-var settingsController = new SettingsController();
-settingsController.loadSettings(function (settings) {
-    var packageBuilder = new PackageBuilder(settings);
-    var subjectService = new SubjectService(settings, packageBuilder);
-    var trustchainService = new TrustchainService(settings);
-    var twitterService = new TwitterService(settings);
-    var profileRepository = new ProfileRepository(settings, localStorage);
+const settingsController = new SettingsController();
+settingsController.loadSettings( (settings) =>{
+    let packageBuilder = new PackageBuilder(settings);
+    let subjectService = new SubjectService(settings, packageBuilder);
+    let trustchainService = new TrustchainService(settings);
+    let twitterService = new TwitterService(settings);
+    let profileRepository = new ProfileRepository(settings, localStorage);
 
-    var twitter = new Twitter(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository);
+    let twitter = new Twitter(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository);
 
     // Update the content when trust changes on the Trustlist.html popup
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

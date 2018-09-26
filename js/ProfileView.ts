@@ -103,7 +103,6 @@ class ProfileView {
     }
 
     createIdenticon(profile) {
-        console.log('indent icon profile value', profile)
         let iconData = null;
 
         // if (profile.owner) {
