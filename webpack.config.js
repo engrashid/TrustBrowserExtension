@@ -4,7 +4,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
-  entry: {main: './js/app.ts', 'js/extpopup': './js/extensionpopup.js', 'js/twitter': './js/Twitter.ts'},
+  entry: {
+    main: './js/app.ts', 
+    'js/extpopup': './js/extensionpopup.js', 
+    'js/twitter': './js/Twitter.ts',
+    'js/tagbar': './js/TagBar.ts',
+    'js/reddit': './js/reddit.ts',
+    'js/redditmodal': './js/redditmodal.ts'
+  },
   mode: 'development',
   devtool: 'cheap-module-source-map',
   module: {
@@ -81,7 +88,7 @@ module.exports = {
     new HtmlWebpackPlugin({  // Also generate a test.html
       filename: './redditmodal.html',
       template: './redditmodal.html',
-      chunks: [''], // no chunk pushed to html
+      chunks: ['js/redditmodal'], // no chunk pushed to html
       minify: {
         removeComments: true,
         collapseWhitespace: true,
