@@ -31,8 +31,8 @@ class  Twitter {
       // processElement: (element: any) => void;
        //: any;
        screen_name: any;
-    Profile: any;
-    DTPProfileController: {};
+       Profile: any;
+       DTPProfileController: {};
         constructor(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository) {
            // var this = this;
             this.OwnerPrefix = "[#owner_]";

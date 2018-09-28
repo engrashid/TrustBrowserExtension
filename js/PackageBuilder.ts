@@ -71,7 +71,7 @@ class PackageBuilder {
         trust.issuer.signature = tce.bitcoin.message.sign(this.settings.keyPair, trust.id.base64ToBuffer());
     }
 
-    CalculateTrustId = function(trust) {
+    CalculateTrustId (trust) {
         let buf = new tce.buffer.Buffer(1024 * 256); // 256 Kb
         let offset = 0;
 

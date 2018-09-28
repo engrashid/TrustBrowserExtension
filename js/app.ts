@@ -38,7 +38,6 @@ import * as angular from 'angular';
 
     }
     init(){
-        console.log('Hi trusehtml i am here in appts')
        this.showContainer = false
        this.history = []
        this.settingsController = new SettingsController();
