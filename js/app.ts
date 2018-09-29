@@ -1,27 +1,19 @@
 import * as angular from 'angular';
- //import './node_modules/identicon.js/identicon.js'
  declare var Identicon: any;
  import './common.js';
- //import './SettingsController.js';
  import SettingsController = require('./SettingsController');
-
- // import './PackageBuilder.js';
  import  PackageBuilder = require('./PackageBuilder');
- //import './TrustchainService.js';
  import TrustchainService = require('./TrustchainService');
-
- //import './TrustHandler.js';
- import  TrustHandler = require('./TrustHandler')
- // import './SubjectService.js';
- import SubjectService = require('./SubjectService')
+ import  TrustHandler = require('./TrustHandler');
+ import SubjectService = require('./SubjectService');
  class Controller {
     showContainer: boolean;
     history: any[];
     settingsController : any;
     settings: any;
-    packageBuilder;
-    subjectService;
-    trustchainService;
+    packageBuilder: any;
+    subjectService: any;
+    trustchainService: any;
     contentTabId: number;
     trustHandler:any;
     subject:any;
@@ -46,7 +38,7 @@ import * as angular from 'angular';
         this.packageBuilder = new PackageBuilder(settings);
         this.subjectService = new SubjectService(settings, this.packageBuilder);
         this.trustchainService = new TrustchainService(settings);
-    
+
         this.addListeners();
         this.requestProfile(null); // Default 
        })
@@ -55,7 +47,6 @@ import * as angular from 'angular';
     requestProfile (profile_name) {
         console.log("RequestData send to background page");
         chrome.runtime.sendMessage({ command: 'requestData', profile_name: null }, (response) => {
-            //let self = this;
             console.log("RequestData response from background page");
             console.log(response);
             console.log('tabid', response.contentTabId)
@@ -216,8 +207,6 @@ import * as angular from 'angular';
     }
 
     verifyTrustLink (trust) {
-
-
         let url = this.settings.infoserver+
             "/trusts?issuerAddress="+encodeURIComponent(trust.issuer.address)+
             "&subjectAddress="+encodeURIComponent(trust.subject.address)+
@@ -266,236 +255,3 @@ import * as angular from 'angular';
   }
    const app = angular.module("myApp", []);
 app.controller('trustlistCtrl',Controller)
-
-// const app = angular.module("myApp", []);
-// app.controller("trustlistCtrl", (this) => {
-
-//     this.init = () => {    
-//         this.showContainer = false; // Less flickring
-//         this.history = [];
-
-//         console.log("Loading Settings from TS");
-//         this.settingsController = new SettingsController();
-//         this.settingsController.loadSettings(function (settings) {
-//             this.settings = settings;
-//             this.packageBuilder = new PackageBuilder(settings);
-//             this.subjectService = new SubjectService(settings, this.packageBuilder);
-//             this.trustchainService = new TrustchainService(settings);
-
-//             this.addListeners();
-//             this.requestProfile(null); // Default 
-//         });
-//     }
-
-//     this.requestProfile = (profile_name) => {
-//         console.log("RequestData send to background page");
-//         chrome.runtime.sendMessage({ command: 'requestData', profile_name: null }, function(response) {
-//             console.log("RequestData response from background page");
-//             console.log(response);
-
-//             this.contentTabId = response.contentTabId;
-
-//             this.loadOnData(response.data);
-//         });
-//     }
-
-//     this.addListeners = () => {
-//         console.log("Adding Listener for calls from the background page.");
-//         chrome.runtime.onMessage.addListener(
-//             (request, sender, sendResponse) => {
-//                 console.log("Listener request from background page");
-//                 console.log(request);
-
-//                 if (request.command == "showTarget") {
-//                     this.contentTabId = request.contentTabId;
-                   
-//                     this.loadOnData(request.data);
-
-//                     if(sendResponse)
-//                         sendResponse({result: "ok"});
-//                 }
-//             });
-//     }
-
-//     this.loadOnData = (profile) => {
-//         this.trustHandler = new TrustHandler(profile.queryResult, this.settings);
-//         this.trustHandler.BuildSubjects();
-
-//         this.load(profile);
-//     }
-
-//     this.reset = () => {
-//         this.subject = null;
-//         this.binarytrusts = [];
-//         this.trusted = [];
-//         this.distrusted = [];
-//         this.jsonVisible = false;
-//     }
-
-//     this.load = (subject) => {
-//         this.reset();
-//         this.subject = subject;
-//         this.defaultScope = this.subject.scope;
-
-//         if(!this.subject.identiconData64)
-//             Object.defineProperty(this.subject, 'identiconData64', { value: this.getIdenticoinData(this.subject.address), writable: false });
-
-//         if(!this.subject.owner)
-//             this.subject.owner = {}
-
-//         // The subject has an owner
-//         if(this.subject.owner.address) {
-//             if(!this.subject.owner.identiconData16)
-//                 Object.defineProperty(this.subject.owner, 'identiconData16', { value: this.getIdenticoinData(this.subject.owner.address, 16), writable: false });
-//         }
-
-//         this.subject.trusts = this.trustHandler.subjects[this.subject.address];
-//         this.subject.binaryTrust = this.trustHandler.CalculateBinaryTrust(this.subject.address);
-
-//         for(let index in this.subject.trusts) {
-//             let t = this.subject.trusts[index];
-
-
-//             let trust = this.packageBuilder.CreateTrust(t.issuer.address, t.issuer.script, t.subject.address, t.type, t.scope, t.claim, t.activate, t.expire, t.note);
-//             trust.claimObj = t.claimObj;
-
-//             if(!trust.owner) {
-//                 let owner = {  
-//                     address: trust.issuer.address
-//                 }
-//                 Object.defineProperty(trust, 'owner', { value: owner, writable: false });
-//             }
-
-//             // If trust is a BinaryTrust, decorate the trust object with data
-//             if(trust.type == PackageBuilder.BINARY_TRUST_DTP1) {
-//                 this.binarytrusts[trust.subject.address] = trust;
-
-//                 if(!trust.identiconData64)
-//                     Object.defineProperty(trust, 'identiconData64', { value: this.getIdenticoinData(trust.issuer.address), writable: false });
-
-//                 // Add trust to the right list
-//                 if(trust.claimObj.trust)
-//                     this.trusted.push(trust);
-//                 else
-//                     this.distrusted.push(trust);
-                
-//                 Object.defineProperty(trust, 'showTrustButton', { value: !(this.subject.binaryTrust.direct && this.subject.binaryTrust.directValue), writable: false });
-//                 Object.defineProperty(trust, 'showDistrustButton', { value: !(this.subject.binaryTrust.direct && !this.subject.binaryTrust.directValue), writable: false });
-//                 Object.defineProperty(trust, 'showUntrustButton', { value: this.subject.binaryTrust.direct, writable: false });
-                
-//                 let alias = this.trustHandler.alias[trust.issuer.address];
-//                 if(alias && alias.length > 0) {
-//                     let item = alias[0];
-//                     let screen_name = item.claimObj.alias;
-//                     trust.address = screen_name.hash160().toDTPAddress();
-//                     trust.alias = screen_name + (trust.showUntrustButton ? " (You)": "");
-//                 } else {
-//                   if(this.subject.binaryTrust.direct) 
-//                     trust.alias = "(You)";
-//                 }
-
-//                 if(Object.keys(trust.scope).length == 0 ) {
-//                     trust.scope = {
-//                         "value" : this.subject.scope
-//                     }
-//                 }
-
-//                 // if(!trust.alias || trust.alias == "") {
-//                 //     trust.alias = trust.address;
-//                 // }
-
-//             }
-//         }
-
-        
-//         this.json = JSON.stringify(subject, undefined, 2);
-//         this.showContainer = true;
-//         this.$apply();
-//     }
-
-//     this.analyseClick = (trust) => {
-//         this.history.push(this.subject);
-
-//         let profile: any = {};
-//         profile.address = trust.issuer.address;
-//         profile.alias = trust.alias;
-//         profile.screen_name = trust.alias;
-//         profile.queryResult = this.subject.queryResult;
-//         profile.scope = this.subject.scope;
-
-//         this.load(profile);
-//     }
-
-
-//     this.historyBack = () => {
-//         this.load(this.history.pop());
-//     }
-
-//     this.showHideJson = () => {
-//         this.jsonVisible = (this.jsonVisible) ? false: true;
-//     }
-
-
-//     this.getIdenticoinData = (address, size) => {
-//         if(!size) size = 64;
-//         return new Identicon(address, {margin:0.1, size:size, format: 'svg'}).toString();
-//     };
-
-//     this.trustDataClick = (trust) => {
-//         this.trustchainService.GetSimilarTrust(trust).done(function(result){
-//             this.trustData =  JSON.stringify(result.data, undefined, 2);
-//             this.jsonVisible = true;
-//         });
-//     }
-
-//     this.verifyTrustLink = (trust) => {
-
-
-//         let url = this.settings.infoserver+
-//             "/trusts?issuerAddress="+encodeURIComponent(trust.issuer.address)+
-//             "&subjectAddress="+encodeURIComponent(trust.subject.address)+
-//             "&type="+encodeURIComponent(trust.type)+
-//             "&scopetype="+encodeURIComponent((trust.scope) ? trust.scope.type : "")+
-//             "&scopevalue="+encodeURIComponent((trust.scope) ? trust.scope.value : "");
-//         return url;
-//     }
-
-
-//     this.trustClick = (profile) => {
-//         this.buildAndSubmitBinaryTrust(profile, true, 0, profile.alias + " trusted");
-//         return false;
-//     };
-
-//     this.distrustClick = (profile) => {
-//         this.buildAndSubmitBinaryTrust(profile, false, 0, profile.alias + " distrusted");
-//         return false;
-//     }
-
-//     this.untrustClick = (profile) => {
-//         this.buildAndSubmitBinaryTrust(profile, undefined, 1, profile.alias + " untrusted");
-//         return false;
-//     }
-
-//     this.buildAndSubmitBinaryTrust = (profile, value, expire, message) => {
-        
-//         var package_ = this.subjectService.BuildBinaryTrust(profile, value, null, expire);
-//         this.packageBuilder.SignPackage(package_);
-//         this.trustchainService.PostTrust(package_).done((trustResult)=> {
-//             //$.notify("Updating view",trustResult.status.toLowerCase());
-//             console.log("Posting package is a "+trustResult.status.toLowerCase());
-
-//             $["notify"](message, 'success');
-
-//             var opt = {
-//                 command: 'updateContent',
-//                 contentTabId: this.contentTabId
-//             }
-//             chrome.runtime.sendMessage(opt);
-
-//         }).fail((trustResult) => { 
-//             $["notify"]("Adding trust failed: " +trustResult.message,"fail");
-//         });
-//     }
-
-    
-// });

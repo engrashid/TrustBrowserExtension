@@ -11,7 +11,6 @@ class PackageBuilder {
         this.settings = settings;
     }
 
-
    CreatePackage(trust) {
         let trustpackage = {
             trusts: (trust) ? [trust] : []

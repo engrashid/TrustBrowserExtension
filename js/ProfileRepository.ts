@@ -1,25 +1,14 @@
  /// TS_IGNORE
  import Profile = require('./Profile'); //declare var DTP: any;
  class ProfileRepository {
-            settings: any
-            profiles: any
-            storage: any
+            settings: any;
+            profiles: any;
+            storage: any;
             constructor(settings, storage){
                 this.settings = settings;
-                this.profiles = {}
-                this.storage = storage
-                // No serializable
-                // Object.defineProperty(this, 'settings', { value: settings, writable: true });
-                // Object.defineProperty(this, 'storage', { value: storage, writable: false });
-                // Object.defineProperty(this, 'profiles', { value: {}, writable: false });
+                this.profiles = {};
+                this.storage = storage;
             }
-        
-        // function ProfileRepository(settings, storage) { 
-        //     // No serializable
-        //     Object.defineProperty(this, 'settings', { value: settings, writable: true });
-        //     Object.defineProperty(this, 'storage', { value: storage, writable: false });
-        //     Object.defineProperty(this, 'profiles', { value: {}, writable: false });
-        // }
 
        getCacheKey (screen_name: string) {
             return 'Twitter'+this.settings.address+screen_name;
@@ -59,6 +48,5 @@
             this.settings = settings;
         }
         
-        //return ProfileRepository;
-    }
+}
 export = ProfileRepository

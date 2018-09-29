@@ -11,7 +11,6 @@ class ProfileView {
         this.fullNameGroup = '.FullNameGroup';
     }
 
-    
     renderElement (element) {
         const $element = $(element);
         let bar = $element.data('dtp_bar');
@@ -104,17 +103,6 @@ class ProfileView {
 
     createIdenticon(profile) {
         let iconData = null;
-
-        // if (profile.owner) {
-        //     if(!profile.owner.data) {
-        //         let icon = new Identicon(profile.owner.address, {margin:0.1, size:16, format: 'svg'});
-        //         profile.owner.identiconData16 = icon.toString();
-        //         profile.time = Date.now();
-        //         profile.controller.save();
-        //     }                    
-        //     iconData = profile.owner.identiconData16;
-        // } else {
-        
         if(!profile.identiconData16) {
             let icon = new Identicon(profile.address, {margin:0.1, size:16, format: 'svg'});
             profile.identiconData16 = icon.toString();
@@ -122,7 +110,6 @@ class ProfileView {
             profile.controller.save();
         }
         iconData = profile.identiconData16;
-        //}
 
         let $icon = $('<a title="'+profile.screen_name+'" href="javascript:void 0" title"'+ profile.address +'"><img src="data:image/svg+xml;base64,' + iconData + '" class="dtpIdenticon"></a>');
         $icon.data("dtp_profile", profile);
@@ -145,8 +132,6 @@ class ProfileView {
          });
         return $icon;
     }
-
-
 
 
    createButton (text, iconClass, type, count) {

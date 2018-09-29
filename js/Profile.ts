@@ -1,5 +1,4 @@
 declare var tce: any;
-
 class Profile {
     static Current = null;
     screen_name: string;

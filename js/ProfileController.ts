@@ -170,33 +170,33 @@ class ProfileController{
         $(domElement).data("dtp_profile", profile);
     }
 
-  static  bindEvents(element, profileRepository) {
-        $(element).on('click', '.trustIcon',  (event) => {
-            let button = event.target;
-            $(button).addClass('trustSpinner24');
-            let tweetContainer = ProfileController.getTweetContainer(button);
-            let screen_name = $(tweetContainer).attr("data-screen-name");
-            let profile = profileRepository.ensureProfile(screen_name);
-            profile.controller.selectedElement = tweetContainer;
+    static  bindEvents(element, profileRepository) {
+            $(element).on('click', '.trustIcon',  (event) => {
+                let button = event.target;
+                $(button).addClass('trustSpinner24');
+                let tweetContainer = ProfileController.getTweetContainer(button);
+                let screen_name = $(tweetContainer).attr("data-screen-name");
+                let profile = profileRepository.ensureProfile(screen_name);
+                profile.controller.selectedElement = tweetContainer;
 
-            this.loadProfile(screen_name, profileRepository).then(function(profile) {
-                if(button['classList'].contains('trust')) {
-                    profile.controller.trust().then(RemoveSpinner);
-                }
+                this.loadProfile(screen_name, profileRepository).then(function(profile) {
+                    if(button['classList'].contains('trust')) {
+                        profile.controller.trust().then(RemoveSpinner);
+                    }
 
-                if(button['classList'].contains('distrust')) {
-                    profile.controller.distrust().then(RemoveSpinner);
-                }
+                    if(button['classList'].contains('distrust')) {
+                        profile.controller.distrust().then(RemoveSpinner);
+                    }
 
-                if(button['classList'].contains('untrust')) {
-                    profile.controller.untrust().then(RemoveSpinner);
+                    if(button['classList'].contains('untrust')) {
+                        profile.controller.untrust().then(RemoveSpinner);
+                    }
+                });
+
+                function RemoveSpinner() {
+                    $(button).removeClass('trustSpinner24');
                 }
             });
-
-            function RemoveSpinner() {
-                $(button).removeClass('trustSpinner24');
-            }
-        });
 
     }
 
