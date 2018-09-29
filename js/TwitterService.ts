@@ -1,5 +1,6 @@
 
  import Profile = require('./Profile');
+ import ProfileView = require('./ProfileView');
 class TwitterService{
     settings: any;
       public BaseUrl= 'https://twitter.com';
@@ -81,7 +82,7 @@ class TwitterService{
            dataType: dataType,
        }).done(function (data, textStatus, jqXHR) {
            deferred.resolve(data);
-       }).fail(function (jqXHR, textStatus, errorThrown) {
+       }).fail( (jqXHR, textStatus, errorThrown) => {
            this.errorHandler(jqXHR, textStatus, errorThrown);
            deferred.fail();
        });
@@ -114,7 +115,7 @@ class TwitterService{
            dataType: 'json',
        }).done(function (msg, textStatus, jqXHR) {
            deferred.resolve(msg);
-       }).fail(function (jqXHR, textStatus, errorThrown) {
+       }).fail( (jqXHR, textStatus, errorThrown) => {
            this.errorHandler(jqXHR, textStatus, errorThrown);
            deferred.fail();
        });
@@ -123,15 +124,17 @@ class TwitterService{
 
    errorHandler(jqXHR, textStatus, errorThrown) {
        if (jqXHR.status == 404 || errorThrown == 'Not Found') {
-           var msg = 'Error 404: Server was not found.';
-           DTP['trace'](msg);
+           let msg = 'Error 404: Server was not found.';
+           ProfileView.showMessage(msg);
        }
        else {
-           var msg = textStatus + " : " + errorThrown;
-           if (jqXHR.responseJSON)
-               msg = JSON.stringify(jqXHR.responseJSON.ExceptionMessage, null, 2);
-
-           DTP['trace'](msg);
+           let msg: string = textStatus + " : " + errorThrown;
+           if (jqXHR.responseJSON.ExceptionMessage){
+            msg = JSON.stringify(jqXHR.responseJSON.ExceptionMessage, null, 2);
+           }else if(jqXHR.responseJSON.message){
+            msg = JSON.stringify(jqXHR.responseJSON.message, null, 2);
+           }
+           ProfileView.showMessage(msg);
        }
    }
 
