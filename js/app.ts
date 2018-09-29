@@ -18,7 +18,7 @@ import * as angular from 'angular';
     showContainer: boolean;
     history: any[];
     settingsController : any;
-    settings;
+    settings: any;
     packageBuilder;
     subjectService;
     trustchainService;
@@ -46,11 +46,9 @@ import * as angular from 'angular';
         this.packageBuilder = new PackageBuilder(settings);
         this.subjectService = new SubjectService(settings, this.packageBuilder);
         this.trustchainService = new TrustchainService(settings);
-        
-
+    
         this.addListeners();
         this.requestProfile(null); // Default 
-        //console.log('class controller working hehuh')
        })
       
     }
@@ -231,7 +229,6 @@ import * as angular from 'angular';
 
 
     trustClick(profile) {
-        console.log('class controller working hehuh')
         this.buildAndSubmitBinaryTrust(profile, true, 0, profile.alias + " trusted");
         return false;
     };

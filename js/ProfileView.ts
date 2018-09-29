@@ -4,7 +4,7 @@ class ProfileView {
     controller: any;
     Anchor: string;
     fullNameGroup: string;
-    constructor( controller:any) {
+    constructor( controller: any) {
         this.controller = controller;
         //this.checkIconUrl = chrome.extension.getURL("img/check13.gif");
         this.Anchor = '.ProfileTweet-action--favorite';

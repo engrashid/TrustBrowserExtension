@@ -1,15 +1,14 @@
 declare var tce: any;
 class PackageBuilder {
-    settings: any;
-   public BINARY_TRUST_DTP1 = "binary.trust.dtp1";
-   public CONFIRM_TRUST_DTP1 = "confirm.trust.dtp1";
-   public RATING_TRUST_DTP1 = "rating.trust.dtp1";
-   public IDENTITY_DTP1 = "identity.dtp1";
-   public ALIAS_IDENTITY_DTP1 = "alias.identity.dtp1";
+   settings: any;
+   public BINARY_TRUST_DTP1: string = "binary.trust.dtp1";
+   public CONFIRM_TRUST_DTP1: string = "confirm.trust.dtp1";
+   public RATING_TRUST_DTP1: string = "rating.trust.dtp1";
+   public IDENTITY_DTP1: string = "identity.dtp1";
+   public ALIAS_IDENTITY_DTP1: string = "alias.identity.dtp1";
    
     constructor(settings) {
         this.settings = settings;
-
     }
 
 

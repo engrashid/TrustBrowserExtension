@@ -1,6 +1,15 @@
  declare var tce: any;
+interface ISettings  {
+     password: string;
+     seed: string;
+     rememberme: boolean;
+     infoserver: string;
+     trustrender: string;
+     resultrender: string;
+     keyPair?: string;
+ }
  class SettingsController {
-    settings: any
+    settings: ISettings
     constructor(){
 
         // initialize settings with default value
@@ -16,7 +25,7 @@
             //"keypair": null
         }
     }
-    saveSettings (settings){
+    saveSettings (settings: ISettings){
         if (settings.rememberme) {
             settings.keyPair = undefined;
             chrome.storage.local.set({ usersettings: settings }, () => {
@@ -31,7 +40,7 @@
         chrome.storage.local.get('usersettings', (result) => {
             console.log('storage',result.usersettings );
             console.log('crmethod',this.settings );
-            let settings = (result.usersettings) ? result.usersettings : this.settings;
+            let settings: ISettings = (result.usersettings) ? result.usersettings : this.settings;
             this.buildKey(settings);
             cb(settings);
         });

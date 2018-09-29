@@ -1,8 +1,5 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 
-//var modalUrl = chrome.extension.getURL("redditmodal.html");
-//var imageUrl = chrome.extension.getURL("img/Question_blue.png");
-//import SubjectService = require('./SubjectService');
 import TagBar = require('./TagBar')
 import  TrustHandler = require('./TrustHandler');
 class RedditD2X {
@@ -17,7 +14,7 @@ class RedditD2X {
     subjects: any[];
     targets: any[];
     trustHandler: any;
-    static JSAPI_CONSUMER_NAME = "DTPreddit";
+    static JSAPI_CONSUMER_NAME: string = "DTPreddit";
     constructor(settings, packageBuilder, subjectService, trustchainService) {
         this.settings = settings;
         this.subjectService = subjectService;
@@ -52,7 +49,6 @@ class RedditD2X {
     }
 
     bindEvents () {
-        //const this = this;
         this.defineEvents();        
 
         document.addEventListener('reddit', function(e) { this.handleEvent(e) }, true);

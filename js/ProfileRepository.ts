@@ -21,11 +21,11 @@
         //     Object.defineProperty(this, 'profiles', { value: {}, writable: false });
         // }
 
-       getCacheKey (screen_name) {
+       getCacheKey (screen_name: string) {
             return 'Twitter'+this.settings.address+screen_name;
         }
 
-        getProfile(screen_name) {
+        getProfile(screen_name: string) {
             let profile = this.profiles[screen_name];
             if(profile)
                 return profile;
@@ -45,7 +45,7 @@
             this.storage.setItem(this.getCacheKey(profile.screen_name), JSON.stringify(profile));
         }
 
-        ensureProfile (screen_name) {
+        ensureProfile (screen_name: string) {
             let profile = this.getProfile(screen_name);
             if(!profile) {
                 profile = new Profile(screen_name);

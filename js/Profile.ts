@@ -2,7 +2,7 @@ declare var tce: any;
 
 class Profile {
     static Current = null;
-    screen_name: any;
+    screen_name: string;
     alias: any;
     address: any;
     scope: string;
