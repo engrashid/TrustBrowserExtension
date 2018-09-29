@@ -255,5 +255,6 @@ import * as angular from 'angular';
         });
     }
   }
-   const app = angular.module("myApp", []);
-app.controller('trustlistCtrl',Controller)
+
+  const app = angular.module("myApp", []);
+  app.controller('trustlistCtrl',Controller) // bootstrap angular app here 

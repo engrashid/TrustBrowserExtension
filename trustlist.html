@@ -65,9 +65,9 @@
                         <td>
                             <div>Alias:{{ trustCtrl.subject.alias }}</div>
                             <div>Address: {{ trustCtrl.subject.address }} - 
-                                <a href="#" ng-click="trustCtrl.trustClick(subject);" ng-title="Trust {{ trustCtrl.subject.alias }}">[T]</a>
-                                <a href="#" ng-click="trustCtrl.distrustClick(subject);" ng-title="Distrust {{ trustCtrl.subject.alias }}">[D]</a>
-                                <a href="#" ng-click="trustCtrl.untrustClick(subject);" ng-title="Untrust {{ trustCtrl.subject.alias }}">[U]</a>
+                                <a href="#" ng-click="trustCtrl.trustClick(trustCtrl.subject);" ng-title="Trust {{ trustCtrl.subject.alias }}">[T]</a>
+                                <a href="#" ng-click="trustCtrl.distrustClick(trustCtrl.subject);" ng-title="Distrust {{ trustCtrl.subject.alias }}">[D]</a>
+                                <a href="#" ng-click="trustCtrl.untrustClick(trustCtrl.subject);" ng-title="Untrust {{ trustCtrl.subject.alias }}">[U]</a>
                             </div>
                             <div ng-hide="!trustCtrl.subject.owner.address" class="small">Owner entity: <img ng-src="data:image/svg+xml;base64,{{ trustCtrl.subject.owner.identiconData16 }}" ng-click="trustCtrl.analyseClick(trustCtrl.subject.owner)"> {{ trustCtrl.subject.owner.address }}</div>
                         </td>
