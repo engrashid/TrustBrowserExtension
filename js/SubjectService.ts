@@ -1,11 +1,12 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 declare var tce: any;
+import ISettings from './Settings.interface';
 class SubjectService  {
     SCRIPT: string;
-    settings: any;
+    settings: ISettings;
     packageBuilder: any;
     subjects = [];
-    constructor(settings, packageBuilder) {
+    constructor(settings: ISettings, packageBuilder) {
         this.SCRIPT = "btc-pkh";
         this.settings = settings;
         this.packageBuilder = packageBuilder;

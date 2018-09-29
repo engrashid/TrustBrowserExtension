@@ -23,6 +23,7 @@ import * as angular from 'angular';
     jsonVisible = false;
     defaultScope;
     json;
+    trustData: string;
     //static $inject = [];
     //static $inject = ['$scope'];
      //$apply: any;
@@ -200,7 +201,8 @@ import * as angular from 'angular';
     };
 
     trustDataClick  (trust) {
-        this.trustchainService.GetSimilarTrust(trust).done(function(result){
+        this.trustchainService.GetSimilarTrust(trust).done((result) => {
+            console.log('trust data from xhr', result)
             this.trustData =  JSON.stringify(result.data, undefined, 2);
             this.jsonVisible = true;
         });

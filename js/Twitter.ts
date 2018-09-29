@@ -7,16 +7,16 @@ import ProfileController= require('./ProfileController');
 import ProfileView = require('./ProfileView');
 import ProfileRepository= require('./ProfileRepository');
 import TrustchainService = require('./TrustchainService');
-//import './SettingsController';
+import ISettings from './Settings.interface';
 import SettingsController = require('./SettingsController');
 import SubjectService = require('./SubjectService')
 import  PackageBuilder = require('./PackageBuilder');
-import  TwitterService = require('./TwitterService');//import './TrustHandler.js';
+import  TwitterService = require('./TwitterService');
 import  TrustHandler = require('./TrustHandler')
    
 class  Twitter {
        OwnerPrefix: string;
-       settings: any;
+       settings: ISettings;
        subjectService: any;
        targets: any[];
        packageBuilder: any;
@@ -27,14 +27,11 @@ class  Twitter {
        waiting: boolean;
        profilesToQuery: {};
        sessionProfiles: {};
-       //DTPProfileController: {};
-      // processElement: (element: any) => void;
-       //: any;
        screen_name: any;
        Profile: any;
        DTPProfileController: {};
         constructor(settings, packageBuilder, subjectService, trustchainService, twitterService, profileRepository) {
-           // var this = this;
+           
             this.OwnerPrefix = "[#owner_]";
             this.settings = settings;
             this.subjectService = subjectService;
@@ -54,7 +51,7 @@ class  Twitter {
             console.log('twitter class init',  this.settings)
            
         }
-        processElement (element) { // Element = dom element
+        processElement(element) { // Element = dom element
             let profileView = new ProfileView(null);
              this.screen_name = element.attributes["data-screen-name"].value;
              console.log('screen_name',  this.screen_name)
@@ -71,12 +68,12 @@ class  Twitter {
 
             profile.controller.render(element);
         }
-        getTweets () {
-            var tweets = $('.tweet.js-stream-tweet');
+        getTweets() {
+            let tweets = $('.tweet.js-stream-tweet');
             return tweets;
         }
 
-        queryDTP  (profiles) {
+        queryDTP(profiles): void {
             //let this = this;
             if(!profiles || Object.keys(profiles).length == 0) {
                 return;
@@ -109,7 +106,7 @@ class  Twitter {
             });
         }
 
-       tweetDTP () {
+       tweetDTP (): void {
             //const this = this;
 
             let status = 'Digital Trust Protocol #DTP \rAddress:' +  Profile.Current.owner.address
@@ -128,7 +125,7 @@ class  Twitter {
             });
         }
 
-        ready (element) {
+        ready (element): void {
             //const this = this;
             //this.Profile = new Profile( this.screen_name);
             $(element).ready( () =>{
@@ -182,14 +179,14 @@ class  Twitter {
             });
         }
 
-        updateContent  () {
+        updateContent(): void {
             this.queryDTP(this.sessionProfiles);
         }
 }
 
 
 const settingsController = new SettingsController();
-settingsController.loadSettings( (settings) =>{
+settingsController.loadSettings( (settings: ISettings) =>{
     let packageBuilder = new PackageBuilder(settings);
     let subjectService = new SubjectService(settings, packageBuilder);
     let trustchainService = new TrustchainService(settings);

@@ -1,12 +1,13 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
+import ISettings from './Settings.interface';
 
 class TrustchainService  {
-    settings: any;
-    constructor(settings) {
+    settings: ISettings;
+    constructor(settings: ISettings) {
         this.settings = settings;
     } 
 
-    Query (targets) {
+    Query (targets: any) {
         let query = this.BuildQuery(targets, null);
         if(query == null) {
             let deferred = $.Deferred();
@@ -75,9 +76,6 @@ class TrustchainService  {
         return this.GetData(url);
     }
 
-    // PostTrustTemplate = function(trust) {
-    //     return this.PostData('/api/trust/build', JSON.stringify(trust));
-    // }
 
     PostTrustTemplate (trustPackage) {
         return this.PostData('/api/package/build', JSON.stringify(trustPackage));
@@ -89,7 +87,6 @@ class TrustchainService  {
     
     GetData (query) {
         let deferred = $.Deferred();
-        //let self = this;
         let url = this.settings.infoserver + query;
 
         $.ajax({
@@ -109,8 +106,8 @@ class TrustchainService  {
 
 
     PostData = (query, data) => {
-        var deferred = $.Deferred();
-        //var self = this;
+        let deferred = $.Deferred();
+
         let url = this.settings['infoserver'] + query;
 
         $.ajax({

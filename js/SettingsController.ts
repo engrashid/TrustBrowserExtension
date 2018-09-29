@@ -1,13 +1,5 @@
  declare var tce: any;
-interface ISettings  {
-     password: string;
-     seed: string;
-     rememberme: boolean;
-     infoserver: string;
-     trustrender: string;
-     resultrender: string;
-     keyPair?: string;
- }
+ import ISettings from './Settings.interface';
  class SettingsController {
     settings: ISettings
     constructor(){

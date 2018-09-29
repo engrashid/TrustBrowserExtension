@@ -21,7 +21,7 @@ class TagBar  {
 
 
     // Constructor
-    constructor(subject, settings, packageBuilder, subjectService, trustchainService) {
+    constructor(subject, settings: any, packageBuilder, subjectService, trustchainService) {
         this.subject = subject;
         this.container = $('<span />')[0];
         this.settings = settings;

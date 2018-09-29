@@ -1,34 +1,17 @@
 
  import Profile = require('./Profile');
  import ProfileView = require('./ProfileView');
+ import ISettings from './Settings.interface';
+
 class TwitterService{
-    settings: any;
+    settings: ISettings;
       public BaseUrl= 'https://twitter.com';
        constructor(settings) {
            this.settings = settings;
        }
 
 
-
-   // TwitterService.prototype.searchProfilesDTP = function (screen_names) {
-   //     let from = screen_names.map(function(val,index,arr) { return '%20from%3A'+val; });
-   //     let nameQuery = from.join('%20OR');
-   
-   //     ///search?f=tweets&q=%23DTP%20address%20signature%20from%3Atrustprotocol%20OR%20from%3Akeutmann&src=typd
-   //     let url = '/search?f=tweets&q=%23DTP%20address%20signature' + nameQuery + '&src=typd';
-   //     if(url.length > 4096) {
-   //         DTP.trace("function searchProfilesDTP query string is too long. Length: "+url.length);
-   //     }
-   //     this.getData(url, 'html').then((html) => {
-
-   //         let result = extractDTP(html);
-
-   //         deferred.resolve(result);
-   //     }).fail((error) => deferred.fail(error));
-
-   // }
-
-   getProfileDTP (screen_name) {
+   getProfileDTP (screen_name: string) {
        let deferred = $.Deferred();
        let url = '/search?f=tweets&q=%23DTP%20Address%20Signature%20from%3A'+ screen_name +'&src=typd';
        this.getData(url, 'html').then((html) => {
@@ -65,7 +48,7 @@ class TwitterService{
        return result;
    }
 
-   getData (path, dataType) {
+   getData (path: string, dataType: any) {
        let deferred = $.Deferred();
        //let self = this;
        let url = this.BaseUrl+path;
@@ -90,11 +73,11 @@ class TwitterService{
    }
 
 
-   sendTweet  (data) {
+   sendTweet  (data: any) {
        return this.postData('/i/tweet/create', data);
    }
 
-   postData (path, data) {
+   postData (path: string, data: any) {
        //let self = this;
        var deferred = $.Deferred();
 

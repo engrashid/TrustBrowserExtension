@@ -1,14 +1,15 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 import  PackageBuilder = require('./PackageBuilder');
+import ISettings from './Settings.interface';
 
 class TrustHandler  {
-    settings: any;
+    settings: ISettings;
     package: any;
     subjects: any[];
     alias: any[];
     packageBuilder: PackageBuilder;
     
-    constructor(trustpackage, settings) {
+    constructor(trustpackage, settings: ISettings) {
         console.log('trust', trustpackage)
         if(!trustpackage) 
         trustpackage = { trusts: [] };
@@ -20,7 +21,8 @@ class TrustHandler  {
         this.packageBuilder = new PackageBuilder(settings);
     }
 
-    BuildSubjects (){
+    BuildSubjects() {
+        
         if(!this.package.trusts)
         {
             return;
@@ -57,7 +59,7 @@ class TrustHandler  {
     }
 
 
-    CalculateBinaryTrust (subjectAddress, ownerAddress) {
+    CalculateBinaryTrust(subjectAddress, ownerAddress) {
         //var self = this;
         let result = {
             direct : false,
@@ -75,7 +77,6 @@ class TrustHandler  {
             return result;
 
         function CalcTrust(trusts, pkgBuilder, settings) {
-           // let self = this;
             if(!trusts) return;
             for(let i in trusts) {
                 let trust = subjectTrusts[i];
@@ -95,13 +96,10 @@ class TrustHandler  {
                 }
             }
         }
-        //CalcTrust(ownerTrusts);
-        //if(result.trust == 0 && result.distrust == 0)
-        //CalcTrust(subjectTrusts);  
+        
         CalcTrust(subjectTrusts, this.packageBuilder, this.settings);   
         CalcTrust(ownerTrusts, this.packageBuilder, this.settings); 
 
-        //result.trustPercent = Math.floor((result.isTrusted * 100) / binaryTrustCount);
         result.state = result.trust - result.distrust;
 
         return result;
