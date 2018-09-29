@@ -39,8 +39,8 @@
         "lib/bitcoinjs/bitcoin.js",
         "lib/Notify/notify.min.js",
         "main.bundle.js",
-        "js/tagbar.js",
-        "js/reddit.js"
+        "js/tagbar.bundle.js",
+        "js/reddit.bundle.js"
       ],
       "run_at": "document_end"
     },

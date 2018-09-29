@@ -100,7 +100,9 @@ module.exports = {
       {from:'img',to:'./img'},
       {from:'fonts',to:'./fonts'},
       {from:'lib',to:'./lib'},
-      {from:'js',to:'./js'},
+      {from:'js/background.js',to:'./js/'},
+      {from:'js/common.js',to:'./js/'},
+      {from:'js/extensionpopup.js',to:'./js/'},
       {from:'typings',to:'./typings'},
       {from:'manifest.json',to:'./manifest.json'},
       {from:'data.json',to:'./data.json'}  
