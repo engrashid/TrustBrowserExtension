@@ -107,8 +107,5 @@ module.exports = {
       {from:'manifest.json',to:'./manifest.json'},
       {from:'data.json',to:'./data.json'}  
   ]),
-  ],
-  optimization: {
-    minimize: false
-  }
+  ]
 };
