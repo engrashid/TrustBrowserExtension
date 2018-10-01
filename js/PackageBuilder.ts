@@ -1,45 +1,49 @@
-var PackageBuilder = (function() {
-
+declare var tce: any;
+class PackageBuilder {
+   settings: any;
+   public BINARY_TRUST_DTP1: string = "binary.trust.dtp1";
+   public CONFIRM_TRUST_DTP1: string = "confirm.trust.dtp1";
+   public RATING_TRUST_DTP1: string = "rating.trust.dtp1";
+   public IDENTITY_DTP1: string = "identity.dtp1";
+   public ALIAS_IDENTITY_DTP1: string = "alias.identity.dtp1";
    
-    function PackageBuilder(settings) {
+    constructor(settings) {
         this.settings = settings;
-
     }
 
-
-    PackageBuilder.prototype.CreatePackage = function(trust) {
-        var package = {
+   CreatePackage(trust) {
+        let trustpackage = {
             trusts: (trust) ? [trust] : []
         }
-        return package;
+        return trustpackage;
     }
 
-    PackageBuilder.prototype.SignPackage = function(package) {
-        for(var trustIndex in package.trusts) {
-            var trust = package.trusts[trustIndex];
+    SignPackage(trustpackage) {
+        for(let trustIndex in trustpackage.trusts) {
+            let trust = trustpackage.trusts[trustIndex];
             this.CalculateTrustId(trust);
             this.SignTrust(trust);
         }
         return this;
     }
 
-    PackageBuilder.prototype.CreateBinaryTrust = function(issuer, script, subject, value, note, scope, activate, expire, note)
+    CreateBinaryTrust (issuer, script, subject, value, note, scope, activate, expire, note2)
     {
-        var claim = (value !== undefined) ? { trust: value } : undefined;
+        let claim = (value !== undefined) ? { trust: value } : undefined;
             
-        return this.CreateTrust(issuer, script, subject, PackageBuilder.BINARY_TRUST_DTP1, scope, JSON.stringify(claim), activate, expire, note);
+        return this.CreateTrust(issuer, script, subject, this.BINARY_TRUST_DTP1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
-    PackageBuilder.prototype.CreateAliasIdentityTrust = function(issuer, script, subject, claim, scope, activate, expire, note)
+    CreateAliasIdentityTrust (issuer, script, subject, claim, scope, activate, expire, note)
     {
-        return this.CreateTrust(issuer, script, subject, PackageBuilder.ALIAS_IDENTITY_DTP1, scope, JSON.stringify(claim), activate, expire, note);
+        return this.CreateTrust(issuer, script, subject, this.ALIAS_IDENTITY_DTP1, scope, JSON.stringify(claim), activate, expire, note);
     }
 
-    PackageBuilder.prototype.CreateTrust = function(issuer, script, subject, type, scope, claim, activate, expire, note)  {
+    CreateTrust (issuer, script, subject, type, scope, claim, activate, expire, note)  {
         if(typeof scope === 'string')
             scope = { value : scope };
 
-        var trust = {
+        let trust = {
             issuer : { 
                 type: script,
                 address: issuer
@@ -60,14 +64,14 @@ var PackageBuilder = (function() {
         return trust;
     }
 
-    PackageBuilder.prototype.SignTrust = function(trust) {
+    SignTrust (trust) {
         //trust.issuer.signature = this.settings.keyPair.signCompact(id);
         trust.issuer.signature = tce.bitcoin.message.sign(this.settings.keyPair, trust.id.base64ToBuffer());
     }
 
-    PackageBuilder.prototype.CalculateTrustId = function(trust) {
-        var buf = new tce.buffer.Buffer(1024 * 256); // 256 Kb
-        var offset = 0;
+    CalculateTrustId (trust) {
+        let buf = new tce.buffer.Buffer(1024 * 256); // 256 Kb
+        let offset = 0;
 
         if(trust.issuer) {
             if(trust.issuer.type)
@@ -116,12 +120,5 @@ var PackageBuilder = (function() {
         buf.copy(data, 0, 0, offset);
         trust.id = tce.bitcoin.crypto.hash256(data); 
     }
-
-    PackageBuilder.BINARY_TRUST_DTP1 = "binary.trust.dtp1";
-    PackageBuilder.CONFIRM_TRUST_DTP1 = "confirm.trust.dtp1";
-    PackageBuilder.RATING_TRUST_DTP1 = "rating.trust.dtp1";
-    PackageBuilder.IDENTITY_DTP1 = "identity.dtp1";
-    PackageBuilder.ALIAS_IDENTITY_DTP1 = "alias.identity.dtp1";
-
-    return PackageBuilder;
-}())
+}
+export = PackageBuilder

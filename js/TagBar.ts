@@ -1,10 +1,27 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
+declare var Identicon: any;
 
-var TagBar = (function () {
+class TagBar  {
+    subject: any;
+    container: HTMLElement;
+    settings: any;
+    packageBuilder: any;
+    subjectService: any;
+    trustchainService: any;
+    updateCallback: any;
+    // Static properties
+    static TAGBAR_NAME = 'reddittagbar';
+    static instances = [];
+    $neutralLink: any;
+    $trustLink: any;
+    $distrustLink: any;
+    $bar: any;
+    $content: any;
+    $identicon: JQLite;
 
 
     // Constructor
-    function TagBar(subject, settings, packageBuilder, subjectService, trustchainService) {
+    constructor(subject, settings: any, packageBuilder, subjectService, trustchainService) {
         this.subject = subject;
         this.container = $('<span />')[0];
         this.settings = settings;
@@ -15,7 +32,7 @@ var TagBar = (function () {
     }
 
     // Instance methods
-    TagBar.prototype.update = function(networkScore, personalScore) {
+    update (networkScore, personalScore) {
         if (this.$neutralLink.length > 0 && personalScore === 0) {
             this.$neutralLink.hide();
         } else {
@@ -75,7 +92,7 @@ var TagBar = (function () {
 
     }
 
-    TagBar.prototype.render = function(expando, subject) {
+    render (expando, subject) {
         const self = this;
         let $htmlElement = $(expando.jsapiTarget);
         if($htmlElement.data(TagBar.TAGBAR_NAME)) return;
@@ -103,7 +120,7 @@ var TagBar = (function () {
         $htmlElement.data(TagBar.TAGBAR_NAME, true);
     }
     
-    TagBar.prototype.createButton = function(type, title, text, subject, value, expire) {
+    createButton(type, title, text, subject, value, expire) {
         const self = this;
 
         let $element = null;
@@ -124,12 +141,12 @@ var TagBar = (function () {
         return $element;
     }
 
-    TagBar.prototype.BuildAndSubmitBinaryTrust = function(subject, value, expire) {
+    BuildAndSubmitBinaryTrust (subject, value, expire) {
         const self = this;
-        var package = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
-        this.packageBuilder.SignPackage(package);
-        $.notify("Updating trust", 'information');
-        this.trustchainService.PostTrust(package).done(function(trustResult){
+        var trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
+        this.packageBuilder.SignPackage(trustpackage);
+        $['notify']("Updating trust", 'information');
+        this.trustchainService.PostTrust(trustpackage).done(function(trustResult){
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
@@ -138,12 +155,12 @@ var TagBar = (function () {
             }
 
         }).fail(function(trustResult){ 
-            $.notify("Adding trust failed: " +trustResult.message,"fail");
+            $['notify']("Adding trust failed: " +trustResult.message,"fail");
         });
     }
 
 
-    TagBar.prototype.createIdenticon = function(subject, title) {
+    createIdenticon (subject, title) {
         var data = new Identicon(subject.address.toString('HEX'), {margin:0.1, size:16, format: 'svg'}).toString();
         var $alink = $('<a title="'+title+'" href="javascript:void 0"><img src="data:image/svg+xml;base64,' + data + '"></a>');
         $alink.data("subject", subject);
@@ -153,13 +170,13 @@ var TagBar = (function () {
                 url: 'trustlist.html',
                 data: $(this).data("subject")
             };
-            opt.w = 800;
-            opt.h = 800;
+            opt['w'] = 800;
+            opt['h'] = 800;
             var wLeft = window.screenLeft ? window.screenLeft : window.screenX;
             var wTop = window.screenTop ? window.screenTop : window.screenY;
     
-            opt.left = Math.floor(wLeft + (window.innerWidth / 2) - (opt.w / 2));
-            opt.top = Math.floor(wTop + (window.innerHeight / 2) - (opt.h / 2));
+            opt['left'] = Math.floor(wLeft + (window.innerWidth / 2) - (opt['w'] / 2));
+            opt['top'] = Math.floor(wTop + (window.innerHeight / 2) - (opt['h'] / 2));
             
             chrome.runtime.sendMessage(opt);
             return false;
@@ -168,10 +185,10 @@ var TagBar = (function () {
         return $alink;
     }
 
-    TagBar.prototype.createIcoin = function(name) {
+    createIcoin (name) {
         const a = document.createElement('a');
         a.href = 'javascript:void 0';
-        a.class = 'entrytrusticon';
+        a['class'] = 'entrytrusticon';
         const img = document.createElement('img');
         a.appendChild(img);
         img.src = chrome.extension.getURL('img/'+name);
@@ -180,7 +197,7 @@ var TagBar = (function () {
     }
 
     // Static methods
-    TagBar.bind = function(expando, subject, settings, packageBuilder, subjectService, trustchainService) {
+    static bind (expando, subject, settings, packageBuilder, subjectService, trustchainService) {
         const id = expando.id;
         let instance = this.instances[id];
         if(!instance) {
@@ -192,11 +209,5 @@ var TagBar = (function () {
 
         return instance;
     }
-
-    
-    // Static properties
-    TagBar.TAGBAR_NAME = 'reddittagbar';
-    TagBar.instances = [];
-
-    return TagBar;
-}());
+}
+export = TagBar

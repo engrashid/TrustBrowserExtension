@@ -1,14 +1,16 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
+import ISettings from './Settings.interface';
 
-var TrustchainService = (function() {
-    function TrustchainService(settings) {
+class TrustchainService  {
+    settings: ISettings;
+    constructor(settings: ISettings) {
         this.settings = settings;
     } 
 
-    TrustchainService.prototype.Query = function(targets) {
-        var query = this.BuildQuery(targets);
+    Query (targets: any) {
+        let query = this.BuildQuery(targets, null);
         if(query == null) {
-            var deferred = $.Deferred();
+            let deferred = $.Deferred();
             deferred.resolve(null);
             return deferred;
         }
@@ -16,14 +18,14 @@ var TrustchainService = (function() {
         return this.PostData('/api/graph/Query', JSON.stringify(query));
     }
 
-    TrustchainService.prototype.BuildQuery = function(targets, scope) {
-        var subjects = [];
-        for (var key in targets) {
+    BuildQuery (targets, scope) {
+        let subjects = [];
+        for (let key in targets) {
             if (!targets.hasOwnProperty(key))
                 continue;
                 // do stuff
-            var target = targets[key];
-            var subject = { address: target.address };
+            let target = targets[key];
+            let subject = { address: target.address };
             subjects.push(subject);
             if(target.owner && target.owner.address) {
                 subject = { address: target.owner.address };
@@ -37,7 +39,7 @@ var TrustchainService = (function() {
         if(typeof scope === 'string')
             scope = { value : scope };
 
-        var obj = {
+        let obj = {
             "issuers": this.settings.address,
             "subjects": subjects,
     
@@ -55,51 +57,47 @@ var TrustchainService = (function() {
         return obj;
     }
 
-    TrustchainService.prototype.GetTrustById = function(id) {
-        var url ='/api/trust/get/'+id; // id = encoded byte array
+    GetTrustById (id) {
+        let url ='/api/trust/get/'+id; // id = encoded byte array
     
         return this.GetData(url);
     }
 
-    TrustchainService.prototype.GetSimilarTrust = function(trust) {
-        var url ='/api/trust/get/?issuer='+trust.issuer.address+'&subject='+trust.subject.address+'&type='+encodeURIComponent(trust.type)+'&scopevalue='+encodeURIComponent((trust.scope) ? trust.scope.value : "");
+    GetSimilarTrust (trust) {
+        let url ='/api/trust/get/?issuer='+trust.issuer.address+'&subject='+trust.subject.address+'&type='+encodeURIComponent(trust.type)+'&scopevalue='+encodeURIComponent((trust.scope) ? trust.scope.value : "");
     
         return this.GetData(url);
     }
 
 
-    TrustchainService.prototype.GetTrustTemplate = function(subject, alias) {
-        var url ='/api/trust/build?issuer='+settings.address+'&subject='+subject+'&alias='+alias;
+    GetTrustTemplate (subject, alias) {
+        let url ='/api/trust/build?issuer='+this.settings.address+'&subject='+subject+'&alias='+alias;
     
         return this.GetData(url);
     }
 
-    TrustchainService.prototype.PostTrustTemplate = function(trust) {
-        return this.PostData('/api/trust/build', JSON.stringify(trust));
+
+    PostTrustTemplate (trustPackage) {
+        return this.PostData('/api/package/build', JSON.stringify(trustPackage));
     }
 
-    TrustchainService.prototype.PostTrustTemplate = function(package) {
-        return this.PostData('/api/package/build', JSON.stringify(package));
-    }
-
-    TrustchainService.prototype.PostTrust = function(trust) {
+    PostTrust (trust) {
         return this.PostData('/api/trust/add', JSON.stringify(trust));
     }
     
-    TrustchainService.prototype.GetData = function(query) {
-        var deferred = $.Deferred();
-        var self = this;
-        var url = this.settings.infoserver + query;
+    GetData (query) {
+        let deferred = $.Deferred();
+        let url = this.settings.infoserver + query;
 
         $.ajax({
             type: "GET",
             url: url,
             contentType: 'application/json; charset=utf-8',
         }).done(function (msg, textStatus, jqXHR) {
-            resolve = msg;
+           let resolve = msg;
             deferred.resolve(resolve);
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            self.TrustServerErrorAlert(jqXHR, textStatus, errorThrown, self.settings.infoserver);
+            this.TrustServerErrorAlert(jqXHR, textStatus, errorThrown, this.settings.infoserver);
             deferred.fail();
         });
 
@@ -107,10 +105,10 @@ var TrustchainService = (function() {
     }
 
 
-    TrustchainService.prototype.PostData = function(query, data) {
-        var deferred = $.Deferred();
-        var self = this;
-        var url = this.settings.infoserver + query;
+    PostData = (query, data) => {
+        let deferred = $.Deferred();
+
+        let url = this.settings['infoserver'] + query;
 
         $.ajax({
             type: "POST",
@@ -119,17 +117,17 @@ var TrustchainService = (function() {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json'
         }).done(function (msg, textStatus, jqXHR) {
-            resolve = msg;
+            let resolve = msg;
             deferred.resolve(resolve);
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            self.TrustServerErrorAlert(jqXHR, textStatus, errorThrown, self.settings.infoserver);
+            this.TrustServerErrorAlert(jqXHR, textStatus, errorThrown, this.settings.infoserver);
             deferred.fail();
         });
 
         return deferred.promise();
     }
 
-    TrustchainService.prototype.TrustServerErrorAlert = function(jqXHR, textStatus, errorThrown, server) {
+    TrustServerErrorAlert (jqXHR, textStatus, errorThrown, server) {
         if (jqXHR.status == 404 || errorThrown == 'Not Found') {
             var msg = 'Error 404: Server ' + server + ' was not found.';
             //alert('Error 404: Server ' + server + ' was not found.');
@@ -144,5 +142,5 @@ var TrustchainService = (function() {
         }
     }
 
-    return TrustchainService;
-}())
+}
+export = TrustchainService

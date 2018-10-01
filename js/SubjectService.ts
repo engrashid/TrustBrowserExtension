@@ -1,13 +1,18 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
-
-var SubjectService = (function() {
-    function SubjectService(settings, packageBuilder) {
+declare var tce: any;
+import ISettings from './Settings.interface';
+class SubjectService  {
+    SCRIPT: string;
+    settings: ISettings;
+    packageBuilder: any;
+    subjects = [];
+    constructor(settings: ISettings, packageBuilder) {
         this.SCRIPT = "btc-pkh";
         this.settings = settings;
         this.packageBuilder = packageBuilder;
     }
 
-    SubjectService.ensureSubject = function(author) {
+    ensureSubject (author) {
         let subject = this.subjects[author];
         if (!subject) {
             subject = {
@@ -21,14 +26,14 @@ var SubjectService = (function() {
         return subject;
     }
 
-    SubjectService.enrichSubject = function(author, comment) {
+   enrichSubject (author, comment) {
 
         let subject = this.ensureSubject(author);
 
         let $proof = $(comment).find("a[href*='scope=reddit']:contains('Proof')")
         if ($proof.length > 0) {
-            var params = getQueryParams($proof.attr("href"));
-            if(params.name == author) {
+            let params = this.getQueryParams($proof.attr("href"));
+            if(params['name'] == author) {
                 if(!subject.owner)
                     subject.owner = params;
                 
@@ -41,9 +46,31 @@ var SubjectService = (function() {
         }
         return subject;
     }
+     getQueryParams(url) {
+        var qparams = {},
+            parts = (url || '').split('?'),
+            qparts, qpart,
+            i = 0;
+    
+        if (parts.length <= 1) {
+            return qparams;
+        } else {
+            qparts = parts[1].split('&');
+            for (let i in qparts) {
+    
+                qpart = qparts[i].split('=');
+                qparams[decodeURIComponent(qpart[0])] =
+                               decodeURIComponent(qpart[1] || '');
+            }
+        }
+    
+        return qparams;
+    };
+    isNullOrWhitespace(input) {
+        return !input || !input.trim();
+    }
 
-
-    SubjectService.prototype.BuildBinaryTrust = function(profile, value, note, expire) {
+    BuildBinaryTrust (profile, value, note, expire) {
         let trust = undefined;
         if(profile.address) {
             trust = this.packageBuilder.CreateBinaryTrust(
@@ -57,10 +84,10 @@ var SubjectService = (function() {
             expire);
         }
         
-        let package = this.packageBuilder.CreatePackage(trust);
+        let trustpackage = this.packageBuilder.CreatePackage(trust);
 
         if(profile.owner && profile.owner.address) {
-            var ownerTrust = this.packageBuilder.CreateBinaryTrust(
+            let ownerTrust = this.packageBuilder.CreateBinaryTrust(
                 this.settings.address, 
                 this.SCRIPT, 
                 profile.owner.address, 
@@ -69,10 +96,10 @@ var SubjectService = (function() {
                 "", // Do not use scope on global identity
                 0,
                 expire);
-            package.trusts.push(ownerTrust);
+                trustpackage.trusts.push(ownerTrust);
 
-            if(!isNullOrWhitespace(profile.alias)) { 
-                var aliastrust = this.packageBuilder.CreateAliasIdentityTrust(
+            if(!this.isNullOrWhitespace(profile.alias)) { 
+                let aliastrust = this.packageBuilder.CreateAliasIdentityTrust(
                     this.settings.address,
                     this.SCRIPT, 
                     profile.owner.address,
@@ -81,15 +108,11 @@ var SubjectService = (function() {
                     0,
                     expire);
 
-                package.trusts.push(aliastrust);
+                    trustpackage.trusts.push(aliastrust);
             }
         }
-        return package;
+        return trustpackage;
     }
-
-    SubjectService.subjects = [];
-
-    return SubjectService;
-}())
-
+}
+export = SubjectService
 

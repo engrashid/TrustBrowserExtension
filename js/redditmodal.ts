@@ -1,7 +1,9 @@
-var settingsController = new SettingsController();
-var target;
-var settings; 
-
+declare var tce: any;
+import './common.js';
+import SettingsController = require('./SettingsController');
+let target;
+let settings; 
+const settingsController = new SettingsController()
 //https://www.reddit.com/user/trustchain/.json
 
 // Onload
@@ -114,15 +116,15 @@ function ParseTargetResult(result) {
 */
 function DataBind(target) {
     if (target.id) {
-        var pubKey = tce.bitcoin.ECPair.fromPublicKeyBuffer(new tce.buffer.Buffer(target.id));
+        let pubKey = tce.bitcoin.ECPair.fromPublicKeyBuffer(new tce.buffer.Buffer(target.id));
         $("#subjectId").html(pubKey.getAddress()); // Only render the Text part
     } else {
         $("#subjectId").html("No Trust ID was provided.");
     }
     $("#contentName").html(target.content); // Only render the Text part
 
-    var buf = tce.buffer.Buffer.concat([new tce.buffer.Buffer("41", 'HEX'), new tce.buffer.Buffer(target.contentid)]);
-    var ctidbase85check = tce.base58check.encode(buf);
+    let buf = tce.buffer.Buffer.concat([new tce.buffer.Buffer("41", 'HEX'), new tce.buffer.Buffer(target.contentid)]);
+    let ctidbase85check = tce.base58check.encode(buf);
     $("#contentid").html(ctidbase85check); // Only render the Text part
 }
 
