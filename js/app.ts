@@ -257,4 +257,4 @@ import * as angular from 'angular';
   }
 
   const app = angular.module("myApp", []);
-  app.controller('trustlistCtrl',Controller) // bootstrap angular app here 
+  app.controller('Controller',["$scope", Controller]) // bootstrap angular app here 
