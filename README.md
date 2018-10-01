@@ -21,4 +21,5 @@ npm install
 npm run build
 
 **  To run in development mode for watch and build
+
 npm run dev
