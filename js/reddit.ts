@@ -32,12 +32,12 @@ class Reddit  {
         this.trustchainService = trustchainService;
         this.queryResult = {};
 
-        $("div.thing[data-author]").each(function () {
+        $("div.thing[data-author]").each(() => {
 
-            var $this = $(this);
-            var authorName = $this.data("author");
+            let $this = $(this);
+            let authorName = $this.data("author");
 
-            var target = this.targets[authorName];
+            let target = this.targets[authorName];
             if(!target) {
                 target = {};
                 //target.$htmlContainers = []; 
@@ -49,14 +49,12 @@ class Reddit  {
                 this.targets[authorName] = target;
             }
 
-            //target.$htmlContainers.push($this);
-
             if(!target.owner) {
-                var $proof = $this.find("a[href*='scope=reddit']:contains('Proof')")
+                let $proof = $this.find("a[href*='scope=reddit']:contains('Proof')")
                 if ($proof.length > 0) {
-                    var params = getQueryParams($proof.attr("href"));
+                    let params = getQueryParams($proof.attr("href"));
                     if(params.name == target.alias) {
-                        var owner = this.targets[this.OwnerPrefix + authorName];
+                        let owner = this.targets[this.OwnerPrefix + authorName];
                         if(!owner) {
                             target.owner = params;
                             target.owner.type = "entity";
@@ -92,10 +90,10 @@ class Reddit  {
     EnableProof () {
     
         function BuildProof(settings, username, content) {
-            var hash = tce.bitcoin.crypto.hash256(new tce.buffer.Buffer(username + content.trim(), 'UTF8'));
-            var signature = settings.keyPair.signCompact(hash); // sign needs a sha256
+            let hash = tce.bitcoin.crypto.hash256(new tce.buffer.Buffer(username + content.trim(), 'UTF8'));
+            let signature = settings.keyPair.signCompact(hash); // sign needs a sha256
     
-            var proof =
+            let proof =
                 ' ([Proof](' + settings.infoserver +
                 '/resources/proof.htm' +
                 '?scope=reddit.com' +
@@ -110,12 +108,12 @@ class Reddit  {
         }
 
         function EnsureProof($area) {
-            var username = $("span.user a").text();
-            var content = $area.val();
-            var proofIndex = content.indexOf("([Proof](");
+            let username = $("span.user a").text();
+            let content = $area.val();
+            let proofIndex = content.indexOf("([Proof](");
             if (proofIndex >= 0) {
-                var temp = content.substring(proofIndex);
-                var endIndex = temp.indexOf("))");
+                let temp = content.substring(proofIndex);
+                let endIndex = temp.indexOf("))");
                 if (endIndex > 0) {
                     content = content.substring(0, proofIndex) + content.substring(proofIndex + endIndex + "))".length);
                 }
@@ -126,7 +124,7 @@ class Reddit  {
 
 
         $('div.usertext-buttons button.save').click(function () {
-            var $area = $(this).closest("form").find("textarea");
+            let $area = $(this).closest("form").find("textarea");
             EnsureProof($area);
             return true;
         });
@@ -168,10 +166,10 @@ class Reddit  {
             return $text;
         }
 
-        this.CreateLink = function(subject, text, title, value, expire) {
+        this.CreateLink = (subject, text, title, value, expire) => {
             let $alink = $("<a title='"+title+"' href='#'>["+text+"]</a>");
             $alink.data("subject",subject);
-            $alink.click(function() {
+            $alink.click(() => {
                 this.BuildAndSubmitBinaryTrust($(this).data("subject"), value, expire);
                 return false;
             });
@@ -286,6 +284,7 @@ class Reddit  {
     };
 
     BuildAndSubmitBinaryTrust(subject, value, expire) {
+        console.log('build binary trust', subject+ value + expire)
         let trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
         this.packageBuilder.SignPackage(trustpackage);
         $['notify']("Updating trust", 'success');
@@ -345,7 +344,7 @@ settingsController.loadSettings(function (settings) {
         });
     } else {
         // Mew reddit
-        var redditD2X = new RedditD2X(settings,  packageBuilder, subjectService, trustchainService);
+        const redditD2X = new RedditD2X(settings,  packageBuilder, subjectService, trustchainService);
         redditD2X.bindEvents()
     }
 });
