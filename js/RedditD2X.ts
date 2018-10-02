@@ -51,7 +51,7 @@ class RedditD2X {
     bindEvents () {
         this.defineEvents();        
 
-        document.addEventListener('reddit', function(e) { this.handleEvent(e) }, true);
+        document.addEventListener('reddit', (e) => { this.handleEvent(e) }, true);
         document.dispatchEvent(new CustomEvent('reddit.ready', {
 			detail: {
 				name: RedditD2X.JSAPI_CONSUMER_NAME,
@@ -61,7 +61,7 @@ class RedditD2X {
 
    defineEvents () {
         
-        var callback = function(expando, detail) { this.ensureTabBar(expando, detail) };
+        const callback = (expando, detail) => { this.ensureTabBar(expando, detail) };
         this.watchForRedditEvents('postAuthor', callback)
         this.watchForRedditEvents('commentAuthor', callback);
     }
@@ -107,7 +107,7 @@ class RedditD2X {
     }
 
 
-    queryDTP = function(custom) {
+    queryDTP (custom: any) {
         this.callQuery = false; // Enable the queryDTP to be called again
 
         this.targets = [];
@@ -161,7 +161,7 @@ class RedditD2X {
         // A hack to make a function call when all the events have executed.
         if (!this.callQuery) { 
             this.callQuery = true;
-            setTimeout(function() { this.queryDTP(); }, 100);
+            setTimeout(() => { this.queryDTP(null); }, 100);
         }
         
 
