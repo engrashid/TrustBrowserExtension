@@ -331,6 +331,7 @@ settingsController.loadSettings(function (settings) {
    
 	if (document.documentElement.getAttribute('xmlns')) {
         // Old reddit
+        console.log('Old reddit')
         let reddit = new Reddit(settings,  packageBuilder, subjectService, trustchainService);
 
         reddit.EnableProof();
@@ -343,6 +344,7 @@ settingsController.loadSettings(function (settings) {
             }
         });
     } else {
+        console.log('New reddit')
         // Mew reddit
         const redditD2X = new RedditD2X(settings,  packageBuilder, subjectService, trustchainService);
         redditD2X.bindEvents()
