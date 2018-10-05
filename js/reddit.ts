@@ -170,6 +170,7 @@ class Reddit  {
             let $alink = $("<a title='"+title+"' href='#'>["+text+"]</a>");
             $alink.data("subject",subject);
             $alink.click(() => {
+                console.log('reddit trust link clicked')
                 this.BuildAndSubmitBinaryTrust($(this).data("subject"), value, expire);
                 return false;
             });
@@ -288,11 +289,11 @@ class Reddit  {
         let trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
         this.packageBuilder.SignPackage(trustpackage);
         $['notify']("Updating trust", 'success');
-        this.trustchainService.PostTrust(trustpackage).done(function(trustResult){
+        this.trustchainService.PostTrust(trustpackage).done((trustResult)=> {
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
-            this.QueryAndRender().then(function() {
+            this.QueryAndRender(null).then(function() {
                 //$.notify("Done",'success');
             }).fail(function(trustResult){ 
                 $['notify']("Query failed: " +trustResult.message,"fail");
@@ -304,7 +305,7 @@ class Reddit  {
     }
 
     QueryAndRender (params) {
-        return this.trustchainService.Query(this.targets, window.location.hostname).then(function(result) {
+        return this.trustchainService.Query(this.targets, window.location.hostname).then((result) => {
             if (result || result.status == "Success") 
             this.queryResult = result.data.results;
             else

@@ -72,7 +72,6 @@ class RedditD2X {
         const contentElement = $('#'+expando.contentId);
         let subject = this.subjectService.enrichSubject(detail.data.author, contentElement);
         const container = this.ensureContainer(subject);
-
         let instance = TagBar.bind(expando, subject, this.settings, this.packageBuilder, this.subjectService, this.trustchainService);
         instance.updateCallback = (subject) => {
             this.queryDTP(subject);
@@ -168,7 +167,7 @@ class RedditD2X {
         if(!event) return;
         if(!event.detail) return;
 
-        //console.log('Type: '+event.detail.type);
+       // console.log('Type: '+event.detail.type);
         const fns = this.callbacks[event.detail.type];
         if(!fns) {
             if (this.environment === 'development') {

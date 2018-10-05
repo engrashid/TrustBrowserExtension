@@ -143,10 +143,12 @@ class TagBar  {
 
     BuildAndSubmitBinaryTrust (subject, value, expire) {
         //const self = this;
-        var trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
+        let trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
         this.packageBuilder.SignPackage(trustpackage);
+        console.log(`trust pkg ${JSON.stringify(trustpackage)}`)
         $['notify']("Updating trust", 'information');
         this.trustchainService.PostTrust(trustpackage).done((trustResult) =>{
+            console.log(`trust post result ${JSON.stringify(trustResult)}`)
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
