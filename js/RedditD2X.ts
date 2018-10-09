@@ -1,7 +1,8 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 
 import TagBar = require('./TagBar')
-import  TrustHandler = require('./TrustHandler');
+import TrustHandler = require('./TrustHandler');
+import ISubject from './SubjectInterface';
 class RedditD2X {
     settings: any;
     subjectService: any;
@@ -14,6 +15,7 @@ class RedditD2X {
     subjects: any[];
     targets: any[];
     trustHandler: any;
+
     static JSAPI_CONSUMER_NAME: string = "DTPreddit";
     constructor(settings, packageBuilder, subjectService, trustchainService) {
         this.settings = settings;
@@ -50,8 +52,7 @@ class RedditD2X {
 
     bindEvents () {
         this.defineEvents();        
-
-        document.addEventListener('reddit', function(e) { this.handleEvent(e) }, true);
+        document.addEventListener('reddit',(e) => this.handleEvent(e), true);
         document.dispatchEvent(new CustomEvent('reddit.ready', {
 			detail: {
 				name: RedditD2X.JSAPI_CONSUMER_NAME,
@@ -60,8 +61,7 @@ class RedditD2X {
     }
 
    defineEvents () {
-        
-        var callback = function(expando, detail) { this.ensureTabBar(expando, detail) };
+        var callback = (expando, detail) => this.ensureTabBar(expando, detail);
         this.watchForRedditEvents('postAuthor', callback)
         this.watchForRedditEvents('commentAuthor', callback);
     }
@@ -107,7 +107,7 @@ class RedditD2X {
     }
 
 
-    queryDTP = function(custom) {
+    queryDTP(custom : ISubject) {
         this.callQuery = false; // Enable the queryDTP to be called again
 
         this.targets = [];
@@ -156,12 +156,11 @@ class RedditD2X {
         console.log(error);
     }    
 
-    handleEvent (event) {
-        
+    handleEvent(event) {
         // A hack to make a function call when all the events have executed.
         if (!this.callQuery) { 
             this.callQuery = true;
-            setTimeout(function() { this.queryDTP(); }, 100);
+            setTimeout(() => this.queryDTP(null), 100);
         }
         
 

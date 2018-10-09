@@ -1,6 +1,8 @@
 ///<reference path="../typings/globals/jquery/index.d.ts" />
 declare var tce: any;
 import ISettings from './Settings.interface';
+import ISubject from './SubjectInterface';
+
 class SubjectService  {
     SCRIPT: string;
     settings: ISettings;
@@ -12,12 +14,12 @@ class SubjectService  {
         this.packageBuilder = packageBuilder;
     }
 
-    ensureSubject (author) {
+    ensureSubject (author) : ISubject {
         let subject = this.subjects[author];
         if (!subject) {
             subject = {
                 author: author,
-                address:author.hash160(),
+                address:author.hash160().toDTPAddress(),
                 scope: window.location.hostname,
                 type: "person",
             };
@@ -26,7 +28,7 @@ class SubjectService  {
         return subject;
     }
 
-   enrichSubject (author, comment) {
+   enrichSubject (author, comment) : ISubject {
 
         let subject = this.ensureSubject(author);
 

@@ -7,8 +7,8 @@ class TrustchainService  {
         this.settings = settings;
     } 
 
-    Query (targets: any) {
-        let query = this.BuildQuery(targets, null);
+    Query (targets: any, scope: any) {
+        let query = this.BuildQuery(targets, scope);
         if(query == null) {
             let deferred = $.Deferred();
             deferred.resolve(null);
@@ -18,7 +18,7 @@ class TrustchainService  {
         return this.PostData('/api/graph/Query', JSON.stringify(query));
     }
 
-    BuildQuery (targets, scope) {
+    BuildQuery (targets: any, scope: any) {
         let subjects = [];
         for (let key in targets) {
             if (!targets.hasOwnProperty(key))

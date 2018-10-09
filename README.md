@@ -1,5 +1,19 @@
 # Trust Browser Extension
 
+#Development
+** To install necessary dependency run 
+
+npm install
+
+**  To build  project run
+
+npm run build
+
+**  To run in development mode for watch and build
+
+npm run dev
+
+#Chorme Browser install
 A client interface for issuing Trust on Twitter
 
 Install:
@@ -12,13 +26,3 @@ Install:
 6. A DTP icon appears on the upper right corner of the browser. Click the icon.
 7. Add your password and seed, press save.
 
-** To install necessary dependency run 
-
-npm install
-
-**  To build  project run
-
-npm run build
-
-**  To run in development mode for watch and build
-npm run dev
