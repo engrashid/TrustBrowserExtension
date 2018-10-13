@@ -128,11 +128,10 @@ class TagBar  {
         switch (type) {
             case 'text' : $element = $("<b title='"+title+"'>["+text+"] <span class='glyphicon glyphicons-ok' aria-hidden='true'></span></b>"); break;
             //case 'link' : $element = $("<a title='"+title+"' href='javascript:void 0'>["+text+"]</a>");
-            case 'link' : $element = $(`<div class="IconContainer js-tooltip" data-original-title="">
-            <span class="Icon Icon--medium"><a class="trustIcon ${type} js-tooltip ${iconClass}" href="javascript:void 0" data-original-title="${text} title="${title}""></a></span>
+            case 'link' : $element = $(`<div class="IconContainer position-trust-icons js-tooltip" data-original-title="">
+            <span class="Icon Icon--medium"><a class="trustIcon ${type} js-tooltip ${iconClass}" href="javascript:void 0" data-original-title="${text}" title="${title}"></a></span>
         </div>`);
         }
-        console.log($element)
         if (type !== 'text') {
             $element.click((event) =>{
                 event.stopPropagation();
@@ -168,7 +167,7 @@ class TagBar  {
 
     createIdenticon (subject, title) {
         var data = new Identicon(subject.address.toString('HEX'), {margin:0.1, size:16, format: 'svg'}).toString();
-        var $alink = $('<a title="'+title+'" href="javascript:void 0"><img src="data:image/svg+xml;base64,' + data + '"></a>');
+        var $alink = $('<a title="'+title+'" href="javascript:void 0" class="position-trust-icons"><img src="data:image/svg+xml;base64,' + data + '"></a>');
         $alink.data("subject", subject);
         $alink.click(function() {
             var opt = {
