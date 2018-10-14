@@ -32,17 +32,16 @@ class Reddit  {
         this.trustchainService = trustchainService;
         this.queryResult = {};
 
-        $("div.thing[data-author]").each(() => {
+        $("div.thing[data-author]").each((i, elm:any) => {
 
-            let $this = $(this);
-            let authorName = $this.data("author");
-
+            let elem = $(elm);
+            let authorName = elem.data("author");
             let target = this.targets[authorName];
             if(!target) {
                 target = {};
                 //target.$htmlContainers = []; 
                 target.alias = authorName;
-                target.thingId = $this.data("author-fullname");
+                target.thingId = elem.data("author-fullname");
                 target.address = authorName.hash160(); // array of bytes (Buffer)
                 target.scope = window.location.hostname;
                 target.type = "thing";
@@ -50,7 +49,7 @@ class Reddit  {
             }
 
             if(!target.owner) {
-                let $proof = $this.find("a[href*='scope=reddit']:contains('Proof')")
+                let $proof = elem.find("a[href*='scope=reddit']:contains('Proof')")
                 if ($proof.length > 0) {
                     let params = getQueryParams($proof.attr("href"));
                     if(params.name == target.alias) {
@@ -169,9 +168,9 @@ class Reddit  {
         this.CreateLink = (subject, text, title, value, expire) => {
             let $alink = $("<a title='"+title+"' href='#'>["+text+"]</a>");
             $alink.data("subject",subject);
-            $alink.click(() => {
-                console.log('reddit trust link clicked')
-                this.BuildAndSubmitBinaryTrust($(this).data("subject"), value, expire);
+            $alink.click((e) => {
+                console.log('reddit trust link clicked', e)
+                this.BuildAndSubmitBinaryTrust($(e.target).data("subject"), value, expire);
                 return false;
             });
             return $alink;
@@ -285,7 +284,7 @@ class Reddit  {
     };
 
     BuildAndSubmitBinaryTrust(subject, value, expire) {
-        console.log('build binary trust', subject+ value + expire)
+
         let trustpackage = this.subjectService.BuildBinaryTrust(subject, value, null, expire);
         this.packageBuilder.SignPackage(trustpackage);
         $['notify']("Updating trust", 'success');
