@@ -169,7 +169,6 @@ class Reddit  {
             let $alink = $("<a title='"+title+"' href='#'>["+text+"]</a>");
             $alink.data("subject",subject);
             $alink.click((e) => {
-                console.log('reddit trust link clicked', e)
                 this.BuildAndSubmitBinaryTrust($(e.target).data("subject"), value, expire);
                 return false;
             });
