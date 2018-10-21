@@ -217,11 +217,14 @@ class Reddit  {
 
             let subject = this.targets[authorName];
             subject.queryResult = this.queryResult;
+            
+
             let owner = this.targets[this.OwnerPrefix + authorName];
             let ownerAddressBase64 = (owner) ? owner.address.toString('base64') : "";
+            //this.trustHandler.BuildSubjects();
             subject.binaryTrust = this.trustHandler.CalculateBinaryTrust(subject.address.toString('base64'), ownerAddressBase64);
 
-
+            console.log('author subject in old red ', subject)
             let $nameLink = $('p.tagline a.id-'+subject.thingId);
             let $tagLine = $nameLink.parent();
             let $entry = $tagLine.closest('div.entry');
@@ -231,14 +234,14 @@ class Reddit  {
             $span.append(this.CreateIdenticon(subject, "Analyse "+authorName));
 
             if(subject.binaryTrust.direct && subject.binaryTrust.directValue) 
-                $span.append(this.CreateText("T", "Trust"));
+                $span.append(this.CreateText(`T(${subject.binaryTrust.trust})`, "Trust"));
             else
-                $span.append(this.CreateLink(subject, "T", "Trust "+authorName, true, 0));
+                $span.append(this.CreateLink(subject, `T(${subject.binaryTrust.trust})`, "Trust "+authorName, true, 0));
 
             if(subject.binaryTrust.direct && !subject.binaryTrust.directValue) 
-                $span.append(this.CreateText("D", "Distrust"));
+                $span.append(this.CreateText(`D(${subject.binaryTrust.distrust})`, "Distrust"));
             else
-                $span.append(this.CreateLink(subject, "D", "Distrust "+authorName, false, 0));
+                $span.append(this.CreateLink(subject, `D(${subject.binaryTrust.distrust})`, "Distrust "+authorName, false, 0));
 
             if(subject.binaryTrust.direct) 
                 $span.append(this.CreateLink(subject, "U", "Untrust "+authorName, true, 1));
@@ -249,10 +252,10 @@ class Reddit  {
             }                
 
             if(subject.binaryTrust.isTrusted > 0) {
-                if(this.settings.trustrender == "color") 
+                if(this.settings.trustrender == "color") {
                     $entry.css("background-color", this.settings.trustrendercolor);
-                else 
-                if(this.settings.trustrender == "icon") {
+                }
+                else if(this.settings.trustrender == "icon") {
                     this.CreateIcoin($nameLink, "check16.png");
                 }
             }
@@ -267,8 +270,7 @@ class Reddit  {
                         $(this).closest('div.entry').children('form, ul').toggle();
                     });
                 }
-                else
-                if(this.settings.resultrender == "icon") {
+                else if(this.settings.resultrender == "icon") {
                     this.CreateIcoin($nameLink, "close16.png");
                 }
             }
@@ -303,6 +305,7 @@ class Reddit  {
     }
 
     QueryAndRender (params) {
+        console.log('q n r', params)
         return this.trustchainService.Query(this.targets, window.location.hostname).then((result) => {
             if (result || result.status == "Success") 
             this.queryResult = result.data.results;

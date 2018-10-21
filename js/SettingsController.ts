@@ -30,8 +30,6 @@
 
     loadSettings (cb) {
         chrome.storage.local.get('usersettings', (result) => {
-            console.log('storage',result.usersettings );
-            console.log('crmethod',this.settings );
             let settings: ISettings = (result.usersettings) ? result.usersettings : this.settings;
             this.buildKey(settings);
             cb(settings);

@@ -34,9 +34,11 @@ class RedditD2X {
 
         this.targets.map(subject => {
             
+            
             let container = this.subjects[subject.author];
             
             container.tagBars.map((key, index) => {
+                
                 const tagBar = container.tagBars[index];
                 if (!container.result) {
                     subject.queryResult = this.queryResult;
@@ -44,7 +46,7 @@ class RedditD2X {
                     let ownerAddressBase64 = (owner) ? owner.address.toString('base64') : "";
                     container.result = this.trustHandler.CalculateBinaryTrust2(subject.address.toString('base64'), ownerAddressBase64);
                 }
-
+                console.log('tag bar', tagBar)
                 tagBar.update(container.result.networkScore, container.result.personalScore);
             })
         })
@@ -96,7 +98,7 @@ class RedditD2X {
 
         if(container.result)
             instance.update(container.result.networkScore, container.result.personalScore);
-
+        console.log('I am instance from tagbar', instance)
         container.tagBars.push(instance);
     }
 

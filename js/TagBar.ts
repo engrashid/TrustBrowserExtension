@@ -33,6 +33,10 @@ class TagBar  {
 
     // Instance methods
     update (networkScore, personalScore) {
+        console.log('Hi i got called ', networkScore + ' ' + personalScore )
+        console.log('N', this.$neutralLink.length )
+        console.log('T', this.$trustLink.length )
+        console.log('U', this.$distrustLink.length )
         if (this.$neutralLink.length > 0 && personalScore === 0) {
             this.$neutralLink.hide();
         } else {
@@ -93,13 +97,20 @@ class TagBar  {
     }
 
     render (expando, subject) {
-        const self = this;
+        //const self = this;
         let $htmlElement = $(expando.jsapiTarget);
         if($htmlElement.data(TagBar.TAGBAR_NAME)) return;
 
         if(this.container.childElementCount === 0) {
             this.$identicon = this.createIdenticon(this.subject, "Analyse "+this.subject.author);
             //this.$trustLink = this.createButtonTw("Trust","trustIconPassive", 'link', 0);
+            //console.log('trust len', trust)
+            // if(subject.queryResult){
+            //     console.log('subject author',  subject.queryResult)
+            // }else{
+            //     console.log('no data')
+            // }
+           
             this.$trustLink = this.createButton('link', "Trust "+this.subject.author, "T", subject, true, 0, "trustIconPassive");
             this.$distrustLink = this.createButton('link', "Distrust "+this.subject.author, "D", subject, false, 0, "distrustIconPassive");
             this.$neutralLink = this.createButton('link', "Neutral "+this.subject.author, "N", subject, true, 1, "untrustIconPassive");
@@ -110,9 +121,9 @@ class TagBar  {
 
             this.$bar = $(expando.jsapiTarget.parentElement.parentElement);
             this.$content = this.$bar.next();
-            this.$bar.click(function(event) {
+            this.$bar.click((event) => {
                 event.stopPropagation();
-                self.$content.toggle();
+                this.$content.toggle();
             });
 
 
@@ -123,7 +134,6 @@ class TagBar  {
     
     createButton(type, title, text, subject, value, expire, iconClass) {
         //const self = this;
-
         let $element = null;
         switch (type) {
             case 'text' : $element = $("<b title='"+title+"'>["+text+"] <span class='glyphicon glyphicons-ok' aria-hidden='true'></span></b>"); break;
@@ -151,7 +161,6 @@ class TagBar  {
         this.packageBuilder.SignPackage(trustpackage);
         $['notify']("Updating trust", 'information');
         this.trustchainService.PostTrust(trustpackage).done((trustResult) =>{
-            console.log(`trust post result ${JSON.stringify(trustResult)}`)
             //$.notify("Updating view",trustResult.status.toLowerCase());
             console.log("Posting package is a "+trustResult.status.toLowerCase());
 
@@ -204,14 +213,13 @@ class TagBar  {
     // Static methods
     static bind (expando, subject, settings, packageBuilder, subjectService, trustchainService) {
         const id = expando.id;
-        let instance = this.instances[id];
+        let instance = TagBar.instances[id];
         if(!instance) {
             instance = new TagBar(subject, settings, packageBuilder, subjectService, trustchainService);
-            this.instances[id] = instance;
+            TagBar.instances[id] = instance;
         }
 
         instance.render(expando, subject);
-
         return instance;
     }
 }

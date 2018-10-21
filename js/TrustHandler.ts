@@ -10,7 +10,7 @@ class TrustHandler  {
     packageBuilder: PackageBuilder;
     
     constructor(trustpackage, settings: ISettings) {
-        console.log('trust', trustpackage)
+        console.log('trust pkg', trustpackage)
         if(!trustpackage) 
         trustpackage = { trusts: [] };
 
@@ -34,7 +34,7 @@ class TrustHandler  {
             trust.claimObj = JSON.parse(trust.claim);
 
             if(trust.type === this.packageBuilder.BINARY_TRUST_DTP1) {
-                var list = this.subjects[trust.subject.address];
+                let list = this.subjects[trust.subject.address];
 
                 if(!list) {
                     list = [];
@@ -61,6 +61,7 @@ class TrustHandler  {
 
     CalculateBinaryTrust(subjectAddress, ownerAddress) {
         //var self = this;
+        //console.log('subject address', subjectAddress)
         let result = {
             direct : false,
             directValue: undefined,
@@ -73,6 +74,9 @@ class TrustHandler  {
         
         let subjectTrusts = this.subjects[subjectAddress];
         let ownerTrusts = this.subjects[ownerAddress];
+        console.log('subjects', this.subjects)
+        console.log('subjectTrusts', subjectTrusts)
+        console.log('ownerTrusts', ownerTrusts)
         if(!subjectTrusts && !ownerTrusts)
             return result;
 
