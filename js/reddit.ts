@@ -85,60 +85,58 @@ class Reddit  {
     
         return true;
     }
+     BuildProof(settings, username, content) {
+        let hash = tce.bitcoin.crypto.hash256(new tce.buffer.Buffer(username + content.trim(), 'UTF8'));
+        let signature = settings.keyPair.signCompact(hash); // sign needs a sha256
 
+        let proof =
+            ' ([Proof](' + settings.infoserver +
+            '/resources/proof.htm' +
+            '?scope=reddit.com' +
+            '&script=btc-pkh' +
+            '&address=' + settings.address +
+            '&signature=' + signature.toString('HEX') +
+            '&hash=' + hash.toString('HEX') +
+            '&name=' + username +
+            ' "' + username + '"))';
+
+        return proof;
+    }
+
+     EnsureProof($area) {
+         console.log(`area val ${$area}`)
+        let username = $("span.user a").text();
+        let content = $area.val();
+        let proofIndex = content.indexOf("([Proof](");
+        if (proofIndex >= 0) {
+            let temp = content.substring(proofIndex);
+            let endIndex = temp.indexOf("))");
+            if (endIndex > 0) {
+                content = content.substring(0, proofIndex) + content.substring(proofIndex + endIndex + "))".length);
+            }
+        }
+
+        $area.val(content + this.BuildProof(this.settings, username, content));
+    }
     EnableProof () {
     
-        function BuildProof(settings, username, content) {
-            let hash = tce.bitcoin.crypto.hash256(new tce.buffer.Buffer(username + content.trim(), 'UTF8'));
-            let signature = settings.keyPair.signCompact(hash); // sign needs a sha256
-    
-            let proof =
-                ' ([Proof](' + settings.infoserver +
-                '/resources/proof.htm' +
-                '?scope=reddit.com' +
-                '&script=btc-pkh' +
-                '&address=' + settings.address +
-                '&signature=' + signature.toString('HEX') +
-                '&hash=' + hash.toString('HEX') +
-                '&name=' + username +
-                ' "' + username + '"))';
-    
-            return proof;
-        }
-
-        function EnsureProof($area) {
-            let username = $("span.user a").text();
-            let content = $area.val();
-            let proofIndex = content.indexOf("([Proof](");
-            if (proofIndex >= 0) {
-                let temp = content.substring(proofIndex);
-                let endIndex = temp.indexOf("))");
-                if (endIndex > 0) {
-                    content = content.substring(0, proofIndex) + content.substring(proofIndex + endIndex + "))".length);
-                }
-            }
-
-            $area.val(content + BuildProof(this.settings, username, content));
-        }
-
-
-        $('div.usertext-buttons button.save').click(function () {
-            let $area = $(this).closest("form").find("textarea");
-            EnsureProof($area);
+        $('div.usertext-buttons button.save').click( (e) => {
+            let $area = $(e.target).closest("form").find("textarea");
+            this.EnsureProof($area);
             return true;
         });
 
 
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                mutation.addedNodes.forEach(function (node) {
+        const observer = new MutationObserver( (mutations) => {
+            mutations.forEach( (mutation) => {
+                mutation.addedNodes.forEach( (node) => {
                     if (!node.childNodes || node.childNodes.length == 0)
                         return;
 
                     let $node = $(node);
-                    $node.find('div.usertext-buttons button.save').click(function () {
-                        let $area = $(this).closest("form").find("textarea");
-                        EnsureProof($area);
+                    $node.find('div.usertext-buttons button.save').click( (e) => {
+                        let $area = $(e.target).closest("form").find("textarea");
+                        this.EnsureProof($area);
                         $area.css('visibility', 'hidden');
 
                         return true;
